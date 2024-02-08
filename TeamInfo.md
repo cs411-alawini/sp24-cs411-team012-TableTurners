@@ -17,9 +17,9 @@
 ## Project Information
 | Info       | Description    |
 |------------|----------------|
-| Title      | ProjectTitle   |
+| Title      | GroceryAid   |
 | SystemURL  | link_to_system |
 | Video Link | link_to_video  |
 
 ## Project Summary
-A summary of the project. Will be included later!
+Team TableTurner’s project will be a grocery comparison full-stack application called GroceryAid. Websites such as Kayak, Expedia, and Honey serve to provide the best price possible for tickets and items across different sites. Grocery shopping can also benefit from this concept by having an application displaying the best prices for common grocery items compared at popular stores. Items can then be organized by stores and saved to a cart so shoppers can easily coordinate their grocery shopping. Grocery product datasets from popular stores like Walmart, Amazon, Costco, and others can be organized to show preferences based on categories, such as prices, items, and stores that are relevant to a grocery shopper’s needs.
