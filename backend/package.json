@@ -1,0 +1,43 @@
+{
+  "name": "grocery-aid-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A web application for comparing grocery prices between stores.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src",
+    "fix": "eslint src --fix",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "prestart": "npm run build",
+    "start": "node ./build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs411-alawini/sp24-cs411-team012-TableTurners"
+  },
+  "author": "CS411 Team 012 Table Turners",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cs411-alawini/sp24-cs411-team012-TableTurners/issues"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "gts": "^5.2.0",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.1",
+    "fs-extra": "^11.2.0"
+  },
+  "engines": {
+    "node": "^20.0.0"
+  }
+}
