@@ -9,8 +9,8 @@
     "fix": "eslint src --fix",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
-    "prestart": "npm run build",
-    "start": "node ./build/index.js"
+    "predev": "npm run build",
+    "dev": "NODE_ENV=development; node ./build/index.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.11.30",
+    "@types/node": "^20.12.2",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",
@@ -35,7 +35,8 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "mysql2": "^3.9.3"
   },
   "engines": {
     "node": "^20.0.0"
