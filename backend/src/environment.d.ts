@@ -1,3 +1,4 @@
+// Declare types for expected environment variables
 declare global {
   namespace NodeJS {
     interface ProcessEnv {

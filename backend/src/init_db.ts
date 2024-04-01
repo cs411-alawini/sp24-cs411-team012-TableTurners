@@ -3,6 +3,15 @@ import mysql from 'mysql2/promise';
 const DB_NAME = 'Grocery-Aid-Database';
 const RETRY_CONNECT = 10;
 
+/**
+ * _tryInitDB()
+ * Attempts to initialize database with tables for grocery aid
+ * Throws error if any part fails
+ * @param host hostname of mysql server
+ * @param user username to authenticate with mysql server
+ * @param password password to authenticate with mysql server
+ * @returns mysql2 connection to mysql database
+ */
 async function _tryInitDB(host: string, user: string, password: string): Promise<mysql.Connection> {
   const connection = await mysql.createConnection({
     host,
@@ -69,6 +78,12 @@ CREATE TABLE IF NOT EXISTS SearchHistory(
   return connection;
 }
 
+/**
+ * initDB()
+ * Initializes the mysql2 database, retrying on failure up to RETRY_CONNECT times
+ * Fatal error if connection/initialization continues to fail
+ * @returns mysql2 connection to mysql database
+ */
 async function initDB(): Promise<mysql.Connection> {
   const SQL_HOST = process.env.SQL_HOST;
   const SQL_USER = process.env.SQL_USER;
