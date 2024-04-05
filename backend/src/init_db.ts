@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Stores(
 
   await connection.query(`
 CREATE TABLE IF NOT EXISTS Products(
-  product_id    INT,
+  product_id    INT AUTO_INCREMENT,
   store_id      INT,
   name          VARCHAR(255),
   price         REAL,
