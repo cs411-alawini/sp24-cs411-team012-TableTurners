@@ -33,6 +33,7 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
+    "argon2": "^0.40.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
     "fs-extra": "^11.2.0",
