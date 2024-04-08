@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "Inserting data may take a while, please be patient."
+echo "Inserting data may take a while, please be patient. You may get a permission error on GCP for line 7. This is normal."
 
 DB_NAME="Grocery-Aid-Database"
 
