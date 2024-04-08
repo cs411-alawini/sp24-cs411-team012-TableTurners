@@ -21,7 +21,7 @@ echo $user
 
 DIRNAME=$(pwd)
 
-mysql --local-infile=1 -h $hostname -u $user -p $DB_NAME -e "
+echo "
 INSERT INTO Stores(store_name) VALUES ('Amazon'); 
 INSERT INTO Stores(store_name) VALUES ('Costco');
 INSERT INTO Stores(store_name) VALUES ('Walmart');
@@ -38,4 +38,8 @@ LOAD DATA LOCAL INFILE '$DIRNAME/Walmart_Cleaned.csv' INTO TABLE Products FIELDS
 LOAD DATA LOCAL INFILE '$DIRNAME/WholeFood_Cleaned.csv' INTO TABLE Products FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 LINES (name, price) SET store_id = 4;
 
 INSERT INTO FoodGroup(product_id, grains, spices, condiments,  meats, fruits, vegetables, dairy, other) SELECT product_id, 0, 0, 0, 0, 0, 0, 0, 1 FROM Products;
-"
+" > temp.sql
+
+mysql --local-infile=1 -h $hostname -u $user -p -f $DB_NAME  < "temp.sql"
+
+rm temp.sql
