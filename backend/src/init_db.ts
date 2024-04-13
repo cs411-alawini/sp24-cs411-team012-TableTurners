@@ -100,7 +100,9 @@ async function initDB(): Promise<mysql.Connection> {
 
   for (let i = 0; i < RETRY_CONNECT; i++) {
     try {
-      return await _tryInitDB(SQL_HOST, SQL_USER, SQL_PWD);
+      const db_connection = await _tryInitDB(SQL_HOST, SQL_USER, SQL_PWD);
+      console.log('INFO: Successfully connected to database');
+      return db_connection;
     } catch (error) {
       console.error(error);
 

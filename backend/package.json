@@ -10,7 +10,7 @@
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "predev": "npm run build",
-    "dev": "NODE_ENV=development; node ./build/index.js"
+    "dev": "tsx watch ./src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
     "eslint": "^8.57.0",
     "eslint-config-google": "^0.14.0",
     "gts": "^5.2.0",
+    "tsx": "^4.7.2",
     "typescript": "^5.4.3"
   },
   "dependencies": {
