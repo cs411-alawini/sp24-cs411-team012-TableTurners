@@ -10,6 +10,13 @@ module.exports = {
   },
   plugins: [],
   rules: {
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        args: 'none',
+      },
+    ],
     'prettier/prettier': [
       'error',
       {

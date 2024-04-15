@@ -8,7 +8,15 @@ services:
     restart: unless-stopped
     volumes:
       - mysql-data:/var/lib/mysql
-      
+
+  redis:
+    image: redis:7.2
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+    volumes: 
+      - redis-cache:/data
+  
   frontend:
     build: 
       context: ./frontend
@@ -23,12 +31,17 @@ services:
       dockerfile: Dockerfile
     environment:
       - PORT=80
+      - USE_HTTPS_COOKIES=false
+      - TRUST_PROXY_COUNT=0
       - SQL_HOST=mysql
       - SQL_USER=root
       - SQL_PWD=password
+      - REDIS_URL=redis://redis
     expose:
       - 80
     restart: unless-stopped
+    volumes:
+      - logs:/logs
 
   nginx:
     image: nginx
@@ -40,4 +53,6 @@ services:
     command: [nginx-debug, '-g', 'daemon off;']
 
 volumes:
+  logs:
   mysql-data:
+  redis-cache:

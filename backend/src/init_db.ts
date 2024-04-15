@@ -1,7 +1,11 @@
 import mysql from 'mysql2/promise';
 
+import { Logger } from './logger.js';
+
 const DB_NAME = 'Grocery-Aid-Database';
-const RETRY_CONNECT = 10;
+const RETRY_TRIES = 10;
+
+export type DB = mysql.Connection;
 
 /**
  * _tryInitDB()
@@ -12,7 +16,7 @@ const RETRY_CONNECT = 10;
  * @param password password to authenticate with mysql server
  * @returns mysql2 connection to mysql database
  */
-async function _tryInitDB(host: string, user: string, password: string): Promise<mysql.Connection> {
+async function _tryInitDB(host: string, user: string, password: string): Promise<DB> {
   const connection = await mysql.createConnection({
     host,
     user,
@@ -86,11 +90,12 @@ CREATE TABLE IF NOT EXISTS FoodGroup(
 
 /**
  * initDB()
- * Initializes the mysql2 database, retrying on failure up to RETRY_CONNECT times
+ * Initializes the MySQL database, retrying on failure up to RETRY_CONNECT times
  * Fatal error if connection/initialization continues to fail
- * @returns mysql2 connection to mysql database
+ * @param logger logger
+ * @returns connection to MySQL database
  */
-async function initDB(): Promise<mysql.Connection> {
+export default async function initDB(logger: Logger): Promise<mysql.Connection> {
   const SQL_HOST = process.env.SQL_HOST;
   const SQL_USER = process.env.SQL_USER;
   const SQL_PWD = process.env.SQL_PWD;
@@ -98,22 +103,20 @@ async function initDB(): Promise<mysql.Connection> {
   if (!SQL_USER) throw Error('FATAL: SQL_USER not defined!');
   if (!SQL_PWD) throw Error('FATAL: SQL_PWD not defined!');
 
-  for (let i = 0; i < RETRY_CONNECT; i++) {
+  for (let i = 0; i < RETRY_TRIES; i++) {
     try {
       const db_connection = await _tryInitDB(SQL_HOST, SQL_USER, SQL_PWD);
-      console.log('INFO: Successfully connected to database');
+      logger.info('Successfully connected to MySQL database');
       return db_connection;
     } catch (error) {
-      console.error(error);
+      logger.error(error);
 
-      if (i < RETRY_CONNECT - 1) {
-        console.error('INFO: Retrying in 1 second.');
+      if (i < RETRY_TRIES - 1) {
+        logger.info('Connecting to MySQL database failed. Retrying in 1 second.');
         await new Promise((r) => setTimeout(r, 1000));
       }
     }
   }
 
-  throw Error('FATAL: Failed to connect to database.');
+  throw Error('FATAL: Failed to connect to MySQL database.');
 }
-
-export default initDB;

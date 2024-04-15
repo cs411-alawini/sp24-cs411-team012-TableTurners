@@ -1,0 +1,62 @@
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:active {
+  text-decoration: none;
+}
+
+#navparent {
+  width: 100vw;
+  top: 0;
+  left: 0;
+  box-shadow: 0px 1px 10px 0px #EAEAEA;
+  height: 6rem;
+  display: flex;
+  position: relative;
+}
+
+#navparent #navleft,
+#navparent #navright {
+  height: 100%;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+#navleft {
+  left: 5rem;
+}
+
+#navright {
+  right: 5rem;
+}
+
+#sitename {
+  font-size: 2rem;
+  text-decoration: none;
+  color: black;
+}
+
+.navlink {
+  margin-right: 2rem;
+  text-decoration: none;
+  color: black;
+}
+
+.navlink:hover {
+  text-decoration: underline;
+}
+
+.navlink:active {
+  text-decoration: underline;
+}

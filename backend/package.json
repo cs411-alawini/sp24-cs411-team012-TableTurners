@@ -34,11 +34,18 @@
     "typescript": "^5.4.3"
   },
   "dependencies": {
+    "@types/express-session": "^1.18.0",
     "argon2": "^0.40.1",
+    "body-parser": "^1.20.2",
+    "connect-redis": "^7.1.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
+    "express-session": "^1.18.0",
     "fs-extra": "^11.2.0",
-    "mysql2": "^3.9.3"
+    "mysql2": "^3.9.3",
+    "redis": "^4.6.13",
+    "winston": "^3.13.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "engines": {
     "node": "^20.0.0"
