@@ -22,9 +22,10 @@ export default function get_profile(logger: Logger, db_connection: DB): RequestH
 
     let response;
     try {
-      [response] = await db_connection.execute('SELECT first_name, last_name, email_addr FROM Accounts WHERE user_id = ?', [
-        user_id,
-      ]);
+      [response] = await db_connection.execute(
+        'SELECT first_name, last_name, email_addr, save_history FROM Accounts WHERE user_id = ?',
+        [user_id],
+      );
     } catch (error) {
       logger.error(`Failed to fetch user profile. {user_id: ${user_id}}`, error);
       res.status(500).send();
@@ -38,7 +39,7 @@ export default function get_profile(logger: Logger, db_connection: DB): RequestH
       return;
     }
 
-    const { first_name, last_name, email_addr } = response[0];
-    res.send({ first_name, last_name, email_addr });
+    const { first_name, last_name, email_addr, save_hist } = response[0];
+    res.send({ first_name, last_name, email_addr, save_history: save_hist !== 0 });
   };
 }

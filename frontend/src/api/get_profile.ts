@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export type ProfileInfo = { first_name: string; last_name: string; email_addr: string };
+export type ProfileInfo = { first_name: string; last_name: string; email_addr: string; save_history: boolean };
 
 /**
  * get_profile()

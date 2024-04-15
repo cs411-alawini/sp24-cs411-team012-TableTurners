@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS Accounts(
   last_name     VARCHAR(255),
   password_hash VARCHAR(255) NOT NULL,
   email_addr    VARCHAR(255) NOT NULL,
+  save_history  BOOL DEFAULT 1,
   PRIMARY KEY   (user_id)
 );
   `);
