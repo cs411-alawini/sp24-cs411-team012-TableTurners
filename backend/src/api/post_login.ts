@@ -14,6 +14,7 @@ import { DB } from '../init_db.js';
 export default function post_login(logger: Logger, db_connection: DB): RequestHandler {
   return async (req, res) => {
     const { email, password } = req.body;
+
     // Missing fields, bad request
     if (email === undefined || password === undefined) {
       res.status(400).send();

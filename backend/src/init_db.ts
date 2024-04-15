@@ -12,12 +12,14 @@ export type DB = mysql.Connection;
  * Attempts to initialize database with tables for grocery aid
  * Throws error if any part fails
  * @param host hostname of mysql server
+ * @param port port of mysql server
  * @param user username to authenticate with mysql server
  * @param password password to authenticate with mysql server
  * @returns mysql2 connection to mysql database
  */
-async function _tryInitDB(host: string, user: string, password: string): Promise<DB> {
+async function _tryInitDB(host: string, port: number, user: string, password: string): Promise<DB> {
   const connection = await mysql.createConnection({
+    port,
     host,
     user,
     password,
@@ -97,6 +99,7 @@ CREATE TABLE IF NOT EXISTS FoodGroup(
  * @returns connection to MySQL database
  */
 export default async function initDB(logger: Logger): Promise<mysql.Connection> {
+  const SQL_PORT = process.env.SQL_PORT ? parseInt(process.env.SQL_PORT) : 3306;
   const SQL_HOST = process.env.SQL_HOST;
   const SQL_USER = process.env.SQL_USER;
   const SQL_PWD = process.env.SQL_PWD;
@@ -106,7 +109,7 @@ export default async function initDB(logger: Logger): Promise<mysql.Connection> 
 
   for (let i = 0; i < RETRY_TRIES; i++) {
     try {
-      const db_connection = await _tryInitDB(SQL_HOST, SQL_USER, SQL_PWD);
+      const db_connection = await _tryInitDB(SQL_HOST, SQL_PORT, SQL_USER, SQL_PWD);
       logger.info('Successfully connected to MySQL database');
       return db_connection;
     } catch (error) {

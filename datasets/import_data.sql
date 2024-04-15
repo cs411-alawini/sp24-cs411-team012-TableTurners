@@ -1,6 +1,6 @@
 
 -- Run this using:
---    mysql --local-infile=1 -h 127.0.0.1 -u root -p < ./import_data.sql
+--    mysql --local-infile=1 -h 127.0.0.1 -P 8001 -u root -p < ./import_data.sql
 
 USE Grocery-Aid-Database;
 

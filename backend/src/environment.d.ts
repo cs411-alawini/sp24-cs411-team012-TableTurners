@@ -6,6 +6,7 @@ declare global {
       PORT?: string;
       USE_HTTPS_COOKIES?: string;
       TRUST_PROXY_COUNT?: string;
+      SQL_PORT?: string;
       SQL_HOST?: string;
       SQL_USER?: string;
       SQL_PWD?: string;
