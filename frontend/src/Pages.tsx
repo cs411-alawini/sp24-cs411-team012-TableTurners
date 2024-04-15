@@ -1,7 +1,6 @@
 import { useEffect, RefObject, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
-import Cookies from 'universal-cookie';
 
 import 'primereact/resources/themes/nano/theme.css';
 import 'primereact/resources/primereact.min.css'; //core css
@@ -26,10 +25,6 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
   // Redirects from /login and /signup to /profile if session is valid
   useEffect(() => {
     const needs_auth = location.pathname !== '/login' && location.pathname !== '/signup';
-
-    // Unauthenticated if cookie doesn't exist
-    const cookies = new Cookies();
-    if (!cookies.get('connect.sid') && needs_auth) navigate('/login');
 
     api
       .get_profile()

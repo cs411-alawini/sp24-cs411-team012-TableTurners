@@ -51,7 +51,6 @@ function _configRouter(logger: Logger, redis_connection: RedisClient): express.R
     cookie: {
       secure: true,
       sameSite: true,
-      httpOnly: false,
       maxAge: SESSION_LENGTH,
     },
   };

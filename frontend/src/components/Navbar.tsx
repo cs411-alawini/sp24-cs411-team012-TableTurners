@@ -1,7 +1,6 @@
 import { RefObject } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
-import Cookies from 'universal-cookie';
 
 import './navbar.css';
 
@@ -13,12 +12,15 @@ function Navbar({ auth, profile }: { toast: RefObject<Toast>; auth: boolean; pro
   const navigate = useNavigate();
 
   function logout() {
-    api.get_logout().catch((error) => {
-      // notify user of error
-      console.error(error);
-    });
-    new Cookies().remove('connect.sid');
-    navigate('/login');
+    api
+      .get_logout()
+      .then(() => {
+        navigate('/login');
+      })
+      .catch((error) => {
+        // notify user of error
+        console.error(error);
+      });
   }
 
   if (!auth) {
