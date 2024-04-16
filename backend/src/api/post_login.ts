@@ -17,6 +17,7 @@ export default function post_login(logger: Logger, db_connection: DB): RequestHa
 
     // Missing fields, bad request
     if (email === undefined || password === undefined) {
+      logger.debug('Invalid request, missing email or password');
       res.status(400).send();
       return;
     }
@@ -31,24 +32,32 @@ export default function post_login(logger: Logger, db_connection: DB): RequestHa
     }
 
     // User not found, unauthorized
-    if (response.length !== 1) {
+    if (response.length === 0) {
+      logger.debug('User not found, unauthorized!');
       res.status(401).send();
       return;
     }
 
-    try {
-      // Hash doesn't mash, unauthorized
-      if (!(await argon2.verify(response[0].password_hash, password))) {
-        res.status(401).send();
-        return;
-      }
-    } catch (error) {
-      logger.error('Failed to verify password.', error);
+    // More than 1 user found, databse issue
+    if (response.length > 1) {
+      logger.warn('Email found multiple times in database!');
       res.status(500).send();
       return;
     }
 
-    req.session.authenticated = true;
+    try {
+      // Hash doesn't match, unauthorized
+      if (!(await argon2.verify(response[0].password_hash, password))) {
+        logger.debug('Password hash did not match, unauthorized!');
+        res.status(401).send();
+        return;
+      }
+    } catch (error) {
+      logger.warn('Failed to verify password.', error);
+      res.status(500).send();
+      return;
+    }
+
     req.session.user_id = response[0].user_id;
     res.status(200).send();
   };

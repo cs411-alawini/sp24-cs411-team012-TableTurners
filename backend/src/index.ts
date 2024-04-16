@@ -17,7 +17,7 @@ function _createExpressLogger(logger: Logger): RequestHandler {
   return async (req, res, next) => {
     next();
     res.once('finish', () => {
-      const request = `"${req.method} ${req.url} HTTP/${req.httpVersion} "`;
+      const request = `"${req.method} ${req.originalUrl} HTTP/${req.httpVersion} "`;
       logger.info(
         `${request} "${req.headers.host}" ${res.statusCode} "${req.socket.remoteAddress}" "${req.get('User-Agent')}"`,
       );

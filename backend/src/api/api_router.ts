@@ -22,7 +22,6 @@ const SESSION_LENGTH = 60 * 60 * 1000;
 // Decalare session object type
 declare module 'express-session' {
   interface SessionData {
-    authenticated: boolean;
     user_id: number;
   }
 }
@@ -67,16 +66,6 @@ function _configRouter(logger: Logger, redis_connection: RedisClient): express.R
   return api_router;
 }
 
-// express middleware to reject unauthenticated sessions
-const _auth_endpoint: RequestHandler = (req, res, next) => {
-  if (req.session.authenticated !== true) {
-    res.status(401).send();
-    return;
-  }
-  req.session.touch();
-  next();
-};
-
 /**
  * createAPIRouter()
  * Creates express api router
@@ -91,6 +80,18 @@ export default function createAPIRouter(
   redis_connection: RedisClient,
 ): express.Router {
   const api_router = _configRouter(logger, redis_connection);
+
+  // express middleware to reject unauthenticated sessions
+  const _auth_endpoint: RequestHandler = (req, res, next) => {
+    if (req.session.user_id === undefined) {
+      logger.debug('user_id was undefined, rejecting authentication');
+      res.status(401).send();
+      return;
+    }
+    // Refresh user's session timeout
+    req.session.touch();
+    next();
+  };
 
   // unauthenticated endpoints
   api_router.post('/login', post_login(logger, db_connection));

@@ -15,7 +15,7 @@ export default function createLogger(): Logger {
   const logLevels = { error: 0, warn: 1, info: 2, debug: 3 };
 
   const logger = winston.createLogger({
-    level: 'debug',
+    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
     levels: logLevels,
     exitOnError: false,
   });
