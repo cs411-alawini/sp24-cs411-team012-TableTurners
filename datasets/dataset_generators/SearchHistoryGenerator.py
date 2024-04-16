@@ -52,7 +52,7 @@ for i in range( 1, 3548 ):
 	# Remove leading space
 	searchString = searchString[ 1: ]
 
-	insertionLine = str( user_id ) + ',' + searchString + '\n'
+	insertionLine = str( user_id ) + ',' + searchString + ';\n'
 	fileWrite.writelines( [ insertionLine ] )
 
 

@@ -41,4 +41,4 @@ acct_src['password_hash'] = acct_src['password'].progress_map(
 acct_src = acct_src.drop('password', axis=1)
 
 # Save to file
-acct_src.to_csv('GenericAccounts.csv', index=None)
+acct_src.to_csv('GenericAccounts.csv', index=None, lineterminator=';\n')
