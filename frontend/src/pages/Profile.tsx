@@ -3,11 +3,14 @@ import { Toast } from 'primereact/toast';
 import Navbar from '../components/Navbar';
 import { ProfileInfo } from '../api/get_profile';
 
-function Profile({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
+function Profile({ toast, profile }: { toast: RefObject<Toast>; profile: ProfileInfo }) {
   return (
     <>
       <Navbar toast={toast} auth={true} profile={profile} />
       <h1>Profile</h1>
+      <p>First Name: {profile.first_name}</p>
+      <p>Last Name: {profile.last_name}</p>
+      <p>Email Address: {profile.email_addr}</p>
     </>
   );
 }
