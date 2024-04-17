@@ -2,8 +2,11 @@ import { RefObject } from 'react';
 import { Toast } from 'primereact/toast';
 import Navbar from '../components/Navbar';
 import { ProfileInfo } from '../api/get_profile';
+import { InputSwitch } from 'primereact/inputswitch';
+import { useState } from "react";        
 
 function Profile({ toast, profile }: { toast: RefObject<Toast>; profile: ProfileInfo }) {
+  const [checked, setChecked] = useState(false);
   return (
     <>
       <Navbar toast={toast} auth={true} profile={profile} />
@@ -11,6 +14,8 @@ function Profile({ toast, profile }: { toast: RefObject<Toast>; profile: Profile
       <p>First Name: {profile.first_name}</p>
       <p>Last Name: {profile.last_name}</p>
       <p>Email Address: {profile.email_addr}</p>
+      <p>Save History</p>
+      <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
     </>
   );
 }
