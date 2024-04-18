@@ -5,7 +5,7 @@ import { Logger } from './logger.js';
 const DB_NAME = 'Grocery-Aid-Database';
 const RETRY_TRIES = 10;
 
-export type DB = mysql.Connection;
+export type DB = mysql.Pool;
 
 /**
  * _tryInitDB()
@@ -18,7 +18,7 @@ export type DB = mysql.Connection;
  * @returns mysql2 connection to mysql database
  */
 async function _tryInitDB(host: string, port: number, user: string, password: string): Promise<DB> {
-  const connection = await mysql.createConnection({
+  const connection = mysql.createPool({
     port,
     host,
     user,
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS FoodGroup(
  * @param logger logger
  * @returns connection to MySQL database
  */
-export default async function initDB(logger: Logger): Promise<mysql.Connection> {
+export default async function initDB(logger: Logger): Promise<DB> {
   const SQL_PORT = process.env.SQL_PORT ? parseInt(process.env.SQL_PORT) : 3306;
   const SQL_HOST = process.env.SQL_HOST;
   const SQL_USER = process.env.SQL_USER;

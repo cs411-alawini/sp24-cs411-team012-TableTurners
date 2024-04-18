@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import bodyParser from 'body-parser';
 import express, { RequestHandler } from 'express';
-import mysql from 'mysql2/promise';
 import session from 'express-session';
 import RedisStore from 'connect-redis';
 
@@ -16,6 +15,7 @@ import post_login from './post_login.js';
 import post_search from './post_search.js';
 import post_signup from './post_signup.js';
 import get_logout from './get_logout.js';
+import { DB } from '../init_db.js';
 
 const SESSION_LENGTH = 60 * 60 * 1000;
 
@@ -74,11 +74,7 @@ function _configRouter(logger: Logger, redis_connection: RedisClient): express.R
  * @param redis_connection connection to redis cache
  * @returns express router
  */
-export default function createAPIRouter(
-  logger: Logger,
-  db_connection: mysql.Connection,
-  redis_connection: RedisClient,
-): express.Router {
+export default function createAPIRouter(logger: Logger, db_connection: DB, redis_connection: RedisClient): express.Router {
   const api_router = _configRouter(logger, redis_connection);
 
   // express middleware to reject unauthenticated sessions
