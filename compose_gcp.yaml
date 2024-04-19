@@ -1,23 +1,5 @@
 name: "grocery-aid"
 services:
-  mysql:
-    image: mysql:8.3
-    environment:
-      - MYSQL_ROOT_PASSWORD=${SQL_ROOT_PWD}
-      - MYSQL_USER=${SQL_USER}
-      - MYSQL_PASSWORD=${SQL_PWD}
-      - MYSQL_FILL_EXAMPLE_DATA=${FILL_EXAMPLE_DATA}
-    expose:
-      - 3306
-    restart: unless-stopped
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./datasets:/docker-entrypoint-initdb.d:ro
-    healthcheck:
-      test: ["CMD", "mysql", "-u", "root", "-p$SQL_ROOT_PWD", "-h", "localhost", "-e", "use DOCKER_DB_READY;"]
-      start_period: 60s
-      start_interval: 1s
-
   redis:
     image: redis:7.2
     environment:
@@ -41,7 +23,7 @@ services:
       - PORT=80
       - USE_HTTPS_COOKIES=${USE_HTTPS_COOKIES}
       - TRUST_PROXY_COUNT=${TRUST_PROXY_COUNT}
-      - SQL_HOST=mysql
+      - SQL_HOST=${SQL_HOST}
       - SQL_USER=${SQL_USER}
       - SQL_PWD=${SQL_PWD}
       - REDIS_URL=redis://default:${REDIS_PWD}@redis
@@ -51,8 +33,6 @@ services:
     volumes:
       - logs:/logs
     depends_on:
-      mysql:
-        condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
@@ -87,6 +67,5 @@ services:
         condition: service_healthy
 
 volumes:
-  mysql-data:
   redis-cache:
   logs:
