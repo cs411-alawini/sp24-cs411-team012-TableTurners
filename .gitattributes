@@ -1,2 +1,2 @@
-./datasets/*.sql eol=lr
-./datasets/*.sh eol=lr
+./datasets/*.sql text eol=lr
+./datasets/*.sh text eol=lr
