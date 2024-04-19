@@ -1,0 +1,36 @@
+name: "grocery-aid-dev"
+services:
+  mysql:
+    image: mysql:8.3
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_FILL_EXAMPLE_DATA=true
+    ports:
+      - 8001:3306
+    restart: unless-stopped
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./datasets:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysql", "-u", "root", "-ppassword", "-h", "localhost", "-e", "use DOCKER_DB_READY;"]
+      start_period: 60s
+      start_interval: 1s
+
+  redis:
+    image: redis:7.2
+    ports:
+      - 8002:6379
+    restart: unless-stopped
+    volumes:
+      - redis-cache:/data
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 10s
+      start_interval: 1s
+
+volumes:
+  mysql-data:
+  redis-cache:

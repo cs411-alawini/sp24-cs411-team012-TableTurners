@@ -28,7 +28,7 @@ function Login({ toast }: { toast: RefObject<Toast> }) {
 
   return (
     <>
-      <Navbar toast={toast} auth={false} />
+      <Navbar toast={toast} />
       <h1>Login</h1>
       <Button
         onClick={() => submit('root3544@Zyxel.com', '1234') /* Replace this with proper submit call with user input */}

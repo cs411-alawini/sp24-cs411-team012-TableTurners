@@ -7,7 +7,7 @@ import { ProfileInfo } from '../api/get_profile';
 function NotFound({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
   return (
     <>
-      <Navbar toast={toast} auth={false} profile={profile} />
+      <Navbar toast={toast} profile={profile} />
       <h1>404 Not Found</h1>
     </>
   );

@@ -17,7 +17,19 @@ export default async function initRedis(logger: Logger): Promise<RedisClient> {
   const REDIS_URL = process.env.REDIS_URL;
   for (let i = 0; i < RETRY_TRIES; i++) {
     try {
-      const client = await createClient({ url: REDIS_URL }).connect();
+      const client = createClient({ url: REDIS_URL });
+      client.on('error', (e) => {
+        logger.error(`Redis client error: ${e.message}`, e);
+      });
+
+      await client.connect();
+      logger.info('Connected to Redis cache');
+
+      logger.info('Checking read/write permissions');
+      await client.set('Test Key', 'Test');
+      await client.get('Test Key');
+      await client.del('Test Key');
+
       logger.info('Successfully connected to Redis cache');
       return client;
     } catch (error) {

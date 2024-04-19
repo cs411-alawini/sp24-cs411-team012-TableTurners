@@ -8,7 +8,7 @@ import api from '../api/api';
 import { Button } from 'primereact/button';
 import { ProfileInfo } from '../api/get_profile';
 
-function Navbar({ auth, profile }: { toast: RefObject<Toast>; auth: boolean; profile?: ProfileInfo }) {
+function Navbar({ profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
   const navigate = useNavigate();
 
   function logout() {
@@ -23,29 +23,28 @@ function Navbar({ auth, profile }: { toast: RefObject<Toast>; auth: boolean; pro
       });
   }
 
-  if (!auth) {
+  if (profile) {
     return (
       <>
         <div id="navparent">
           <div id="navleft">
-            <Link to={'/profile'}>
+            <Link to={'/search'}>
               <p id="sitename">Grocery Aid</p>
             </Link>
           </div>
           <div id="navright">
-            <Link to={'/login'} className="navlink">
-              Login
+            <Link to={'/search'} className="navlink">
+              Search
             </Link>
-            <Link to={'/signup'} className="navlink" style={{ marginRight: '0' }}>
-              <Button>Signup</Button>
+            <Link to={'/profile'} className="navlink">
+              Profile ({profile?.first_name})
             </Link>
+            <Button onClick={() => logout()}>Logout</Button>
           </div>
         </div>
       </>
     );
   }
-
-  if (!profile) return <></>;
 
   return (
     <>
@@ -56,13 +55,12 @@ function Navbar({ auth, profile }: { toast: RefObject<Toast>; auth: boolean; pro
           </Link>
         </div>
         <div id="navright">
-          <Link to={'/search'} className="navlink">
-            Search
+          <Link to={'/login'} className="navlink">
+            Login
           </Link>
-          <Link to={'/profile'} className="navlink">
-            Profile ({profile?.first_name})
+          <Link to={'/signup'} className="navlink" style={{ marginRight: '0' }}>
+            <Button>Signup</Button>
           </Link>
-          <Button onClick={() => logout()}>Logout</Button>
         </div>
       </div>
     </>

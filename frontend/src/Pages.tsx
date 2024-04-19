@@ -24,13 +24,20 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
   // Redirect from pages that need authenticate to /login if session is invalid
   // Redirects from /login and /signup to /profile if session is valid
   useEffect(() => {
-    const needs_auth = location.pathname !== '/login' && location.pathname !== '/signup';
+    const needs_auth = ['/profile', '/search'];
+    const redirect_profile = ['/login', '/signup'];
 
     api
       .get_profile()
       .then((profile) => {
-        if (!profile && needs_auth) return navigate('/login');
-        if (profile && !needs_auth) return navigate('/profile');
+        if (!profile && needs_auth.includes(location.pathname)) {
+          toast.current?.show({ severity: 'error', summary: 'You need to login to view that page' });
+          return navigate('/login');
+        }
+        if (profile && redirect_profile.includes(location.pathname)) {
+          toast.current?.show({ severity: 'info', summary: 'Already logged in' });
+          return navigate('/profile');
+        }
         if (!profile) return;
 
         setProfile(profile);
@@ -38,7 +45,9 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
       .catch((error) => {
         // notify user of error
         console.error(error);
-        toast.current?.show({ severity: 'error', summary: error.message });
+        if (needs_auth.includes(location.pathname)) {
+          toast.current?.show({ severity: 'error', summary: error.message, detail: 'Try again later' });
+        }
       });
   }, [location.pathname]);
 

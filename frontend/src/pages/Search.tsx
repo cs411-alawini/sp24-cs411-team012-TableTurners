@@ -4,9 +4,11 @@ import Navbar from '../components/Navbar';
 import { ProfileInfo } from '../api/get_profile';
 
 function Search({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
+  if (!profile) return <Navbar toast={toast} profile={profile} />;
+
   return (
     <>
-      <Navbar toast={toast} auth={true} profile={profile} />
+      <Navbar toast={toast} profile={profile} />
       <h1>Search</h1>
     </>
   );

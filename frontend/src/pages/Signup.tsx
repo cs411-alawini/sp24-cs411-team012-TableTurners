@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 function Signup({ toast }: { toast: RefObject<Toast> }) {
   return (
     <>
-      <Navbar toast={toast} auth={false} />
+      <Navbar toast={toast} />
       <h1>Signup</h1>
     </>
   );
