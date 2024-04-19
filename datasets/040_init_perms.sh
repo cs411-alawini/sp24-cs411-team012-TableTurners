@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # SQL script to give permissions to MYSQL_USER (if it is defined)
 # This script is run by the mysql docker container on initialization (first run on fresh data volume)
 #    These scripts are numbered so that they are run in order by the mysql docker container
