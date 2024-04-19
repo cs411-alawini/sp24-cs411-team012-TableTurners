@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Shell script to initialize database data with csv values 
 # if "MYSQL_FILL_EXAMPLE_DATA" environment variable is set to "true"
 
