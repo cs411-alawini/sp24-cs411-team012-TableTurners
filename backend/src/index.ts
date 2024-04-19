@@ -35,13 +35,14 @@ function _createExpressLogger(logger: Logger): RequestHandler {
  */
 function _startAPIWebserver(logger: Logger, db_connection: DB, redis_connection: RedisClient): http.Server {
   const PORT = process.env.PORT;
+  const TRUST_PROXY = process.env.TRUST_PROXY_COUNT ? parseInt(process.env.TRUST_PROXY_COUNT) : false;
   if (!PORT) throw Error('FATAL: PORT not defined!');
 
   const app = express();
   app.use(_createExpressLogger(logger));
 
   // Set the number of trusted proxy hops (for use when HTTPS cookies are on)
-  app.set('trust proxy', process.env.TRUST_PROXY_COUNT);
+  app.set('trust proxy', TRUST_PROXY);
 
   app.use('/api', createAPIRouter(logger, db_connection, redis_connection));
 

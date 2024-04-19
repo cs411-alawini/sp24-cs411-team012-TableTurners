@@ -9,7 +9,7 @@ export type ProfileInfo = { first_name: string; last_name: string; email_addr: s
  */
 export default async function get_profile(): Promise<ProfileInfo | undefined> {
   try {
-    const res = await axios.get('/api/profile');
+    const res = await axios.get('/api/profile', { withCredentials: true });
     return res.data;
   } catch (error) {
     // Incorrect email/password if 401, unknown error otherwise
