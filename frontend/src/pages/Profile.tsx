@@ -3,9 +3,11 @@ import { Toast } from 'primereact/toast';
 import Navbar from '../components/Navbar';
 import { ProfileInfo } from '../api/get_profile';
 import { InputSwitch } from 'primereact/inputswitch';
-import { useState } from "react";        
+import { useState } from 'react';
 
-function Profile({ toast, profile }: { toast: RefObject<Toast>; profile: ProfileInfo }) {
+function Profile({ toast, profile }: { toast: RefObject<Toast>; profile: ProfileInfo | undefined }) {
+  if (!profile) return <></>;
+
   const [checked, setChecked] = useState(false);
   return (
     <>
