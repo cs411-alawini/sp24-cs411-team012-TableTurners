@@ -1,5 +1,5 @@
 * text=auto
 
-*.sql text eol=lr
-*.sh text eol=lr
-*.csv text eol=lr
+datasets/*.sql text eol=lr
+datasets/*.sh text eol=lr
+datasets/*.csv text eol=lr
