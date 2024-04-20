@@ -44,6 +44,7 @@ function Profile({ toast, profile }: { toast: RefObject<Toast>; profile?: Profil
       })
       .catch((error) => {
         // notify user of error
+        setHistory([]);
         console.error(error);
         toast.current?.show({ severity: 'error', summary: error.message, detail: 'Try again later' });
       });
