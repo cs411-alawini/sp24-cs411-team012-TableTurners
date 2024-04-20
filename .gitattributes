@@ -1,2 +1,3 @@
-./datasets/*.sql text eol=lr
-./datasets/*.sh text eol=lr
+*.sql text eol=lr
+*.sh text eol=lr
+*.csv text eol=lr
