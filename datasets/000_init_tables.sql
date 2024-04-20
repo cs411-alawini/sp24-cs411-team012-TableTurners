@@ -26,7 +26,7 @@ CREATE TABLE Accounts(
   first_name    VARCHAR(255),
   last_name     VARCHAR(255),
   password_hash VARCHAR(255) NOT NULL,
-  email_addr    VARCHAR(255) NOT NULL,
+  email_addr    VARCHAR(255) NOT NULL UNIQUE,
   save_history  BOOL DEFAULT 1,
   PRIMARY KEY   (user_id)
 );
