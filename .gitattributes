@@ -1,0 +1,3 @@
+*.sql text eol=lr
+*.sh text eol=lr
+*.csv text eol=lr
