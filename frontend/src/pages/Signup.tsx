@@ -6,7 +6,9 @@ function Signup({ toast }: { toast: RefObject<Toast> }) {
   return (
     <>
       <Navbar toast={toast} />
-      <h1>Signup</h1>
+      <div id="content-container">
+        <h1>Signup</h1>
+      </div>
     </>
   );
 }

@@ -8,7 +8,9 @@ function NotFound({ toast, profile }: { toast: RefObject<Toast>; profile?: Profi
   return (
     <>
       <Navbar toast={toast} profile={profile} />
-      <h1>404 Not Found</h1>
+      <div id="content-container">
+        <h1>404 Not Found</h1>
+      </div>
     </>
   );
 }

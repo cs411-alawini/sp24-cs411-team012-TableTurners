@@ -7,6 +7,7 @@ import './navbar.css';
 import api from '../api/api';
 import { Button } from 'primereact/button';
 import { ProfileInfo } from '../api/get_profile';
+import { PrimeIcons } from 'primereact/api';
 
 function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: Profile
             <Link to={'/profile'} className="navlink">
               Profile ({profile?.first_name})
             </Link>
-            <Button onClick={() => logout()} loading={loading}>
+            <Button onClick={() => logout()} loading={loading} icon={PrimeIcons.SIGN_OUT}>
               Logout
             </Button>
           </div>
@@ -70,7 +71,7 @@ function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: Profile
             Login
           </Link>
           <Link to={'/signup'} className="navlink" style={{ marginRight: '0' }}>
-            <Button>Signup</Button>
+            <Button icon={PrimeIcons.USER_PLUS}>Signup</Button>
           </Link>
         </div>
       </div>

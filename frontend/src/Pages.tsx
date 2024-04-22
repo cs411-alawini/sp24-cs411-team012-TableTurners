@@ -2,10 +2,6 @@ import { useEffect, RefObject, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
-import 'primereact/resources/themes/nano/theme.css';
-import 'primereact/resources/primereact.min.css'; //core css
-import 'primeicons/primeicons.css'; //icons
-
 import Login from './pages/Login.tsx';
 import NotFound from './pages/NotFound.tsx';
 import Profile from './pages/Profile.tsx';

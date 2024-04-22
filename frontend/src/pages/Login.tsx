@@ -5,6 +5,7 @@ import { Toast } from 'primereact/toast';
 
 import api from '../api/api';
 import Navbar from '../components/Navbar';
+import { PrimeIcons } from 'primereact/api';
 
 function Login({ toast }: { toast: RefObject<Toast> }) {
   const navigate = useNavigate();
@@ -33,13 +34,16 @@ function Login({ toast }: { toast: RefObject<Toast> }) {
   return (
     <>
       <Navbar toast={toast} />
-      <h1>Login</h1>
-      <Button
-        onClick={() => submit('root3544@Zyxel.com', '1234') /* Replace this with proper submit call with user input */}
-        loading={loading}
-      >
-        Login
-      </Button>
+      <div id="content-container">
+        <h1>Login</h1>
+        <Button
+          icon={PrimeIcons.SIGN_IN}
+          onClick={() => submit('root3544@Zyxel.com', '1234') /* Replace this with proper submit call with user input */}
+          loading={loading}
+        >
+          Login
+        </Button>
+      </div>
     </>
   );
 }

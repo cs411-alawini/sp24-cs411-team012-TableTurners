@@ -36,8 +36,6 @@ export default function post_del_account(logger: Logger, db_connection: DB): Req
       return;
     }
 
-    await new Promise((r) => setTimeout(r, 1000));
-
     // Delete user's session deleting their account
     req.session.destroy(() => {});
     res.status(200).send();

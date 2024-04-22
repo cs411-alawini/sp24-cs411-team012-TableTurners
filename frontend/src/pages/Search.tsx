@@ -9,7 +9,9 @@ function Search({ toast, profile }: { toast: RefObject<Toast>; profile?: Profile
   return (
     <>
       <Navbar toast={toast} profile={profile} />
-      <h1>Search</h1>
+      <div id="content-container">
+        <h1>Search</h1>
+      </div>
     </>
   );
 }
