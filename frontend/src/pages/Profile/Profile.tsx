@@ -6,7 +6,6 @@ import HistoryView from './components/HistoryView';
 
 function Profile({ toast, profile }: PageProps) {
   if (!profile) return <></>;
-
   return (
     <>
       <Card>

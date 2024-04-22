@@ -10,6 +10,7 @@ import api from '../../../api/api';
 import { PageProps } from '../../../Pages';
 
 export default function ProfileView({ toast, profile }: PageProps) {
+  if (!profile) return <></>;
   const navigate = useNavigate();
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);

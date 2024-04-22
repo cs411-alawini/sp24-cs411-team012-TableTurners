@@ -1,4 +1,4 @@
-import { useEffect, RefObject, useState, ReactElement, ReactNode } from 'react';
+import { useEffect, RefObject, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
@@ -12,7 +12,7 @@ import { ProfileInfo } from './api/get_profile.ts';
 import api from './api/api.ts';
 import Navbar from './components/Navbar.tsx';
 
-export type PageProps = { toast: RefObject<Toast>; profile: ProfileInfo };
+export type PageProps = { toast: RefObject<Toast>; profile?: ProfileInfo };
 
 function Pages({ toast }: { toast: RefObject<Toast> }) {
   const navigate = useNavigate();
@@ -29,6 +29,8 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
     api
       .get_profile()
       .then((profile) => {
+        setProfile(profile);
+
         if (!profile && needs_auth.includes(location.pathname)) {
           toast.current?.show({ severity: 'error', summary: 'You need to login to view that page' });
           return navigate('/login');
@@ -38,8 +40,6 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
           return navigate('/profile');
         }
         if (!profile) return;
-
-        setProfile(profile);
       })
       .catch((error) => {
         // notify user of error

@@ -10,6 +10,7 @@ import { ProfileInfo } from '../api/get_profile';
 import { PrimeIcons } from 'primereact/api';
 
 function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
+  console.log(profile);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
