@@ -3,7 +3,7 @@ import { PageProps } from '../../Pages';
 function Signup({ toast }: PageProps) {
   return (
     <>
-      <h1>Signup</h1>
+      <h1>Sign Up</h1>
     </>
   );
 }

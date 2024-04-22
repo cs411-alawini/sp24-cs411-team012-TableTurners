@@ -1,5 +1,5 @@
 import { RefObject, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
 import './navbar.css';
@@ -10,7 +10,7 @@ import { ProfileInfo } from '../api/get_profile';
 import { PrimeIcons } from 'primereact/api';
 
 function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
-  console.log(profile);
+  const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -35,11 +35,12 @@ function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: Profile
   }
 
   if (profile) {
+    const logo_link = location.pathname === '/search' ? '/profile' : '/search';
     return (
       <>
         <div id="navparent">
           <div id="navleft">
-            <Link to={'/search'}>
+            <Link to={logo_link}>
               <p id="sitename">Grocery Aid</p>
             </Link>
           </div>
@@ -59,11 +60,12 @@ function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: Profile
     );
   }
 
+  const logo_link = location.pathname === '/login' ? '/signup' : '/login';
   return (
     <>
       <div id="navparent">
         <div id="navleft">
-          <Link to={'/profile'}>
+          <Link to={logo_link}>
             <p id="sitename">Grocery Aid</p>
           </Link>
         </div>
@@ -72,7 +74,7 @@ function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: Profile
             Login
           </Link>
           <Link to={'/signup'} className="navlink" style={{ marginRight: '0' }}>
-            <Button icon={PrimeIcons.USER_PLUS}>Signup</Button>
+            <Button icon={PrimeIcons.USER_PLUS}>Sign Up</Button>
           </Link>
         </div>
       </div>

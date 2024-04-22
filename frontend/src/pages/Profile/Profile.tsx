@@ -9,7 +9,7 @@ function Profile({ toast, profile }: PageProps) {
   return (
     <>
       <Card>
-        <h1 style={{ marginTop: 0 }}>Profile</h1>
+        <h1 style={{ marginTop: 0, color: 'black' }}>Profile</h1>
         <ProfileView toast={toast} profile={profile} />
       </Card>
 
