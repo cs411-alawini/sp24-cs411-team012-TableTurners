@@ -1,15 +1,18 @@
-import { useEffect, RefObject, useState } from 'react';
+import { useEffect, RefObject, useState, ReactElement, ReactNode } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
-import Login from './pages/Login.tsx';
-import NotFound from './pages/NotFound.tsx';
-import Profile from './pages/Profile.tsx';
-import Search from './pages/Search.tsx';
-import Signup from './pages/Signup.tsx';
+import Login from './pages/Login/Login.tsx';
+import NotFound from './pages/NotFound/NotFound.tsx';
+import Profile from './pages/Profile/Profile.tsx';
+import Search from './pages/Search/Search.tsx';
+import Signup from './pages/Signup/Signup.tsx';
 import { ProfileInfo } from './api/get_profile.ts';
 
 import api from './api/api.ts';
+import Navbar from './components/Navbar.tsx';
+
+export type PageProps = { toast: RefObject<Toast>; profile: ProfileInfo };
 
 function Pages({ toast }: { toast: RefObject<Toast> }) {
   const navigate = useNavigate();
@@ -51,14 +54,23 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
       });
   }, [location.pathname]);
 
+  const Container = (PageComponent: JSX.Element) => {
+    return (
+      <>
+        <Navbar toast={toast} profile={profile} />
+        <div id="content-container">{PageComponent}</div>
+      </>
+    );
+  };
+
   return (
     <Routes>
-      <Route path="/" element={<Login toast={toast} />} />
-      <Route path="/login" element={<Login toast={toast} />} />
-      <Route path="/signup" element={<Signup toast={toast} />} />
-      <Route path="/profile" element={<Profile toast={toast} profile={profile} />} />
-      <Route path="/search" element={<Search toast={toast} profile={profile} />} />
-      <Route path="/*" element={<NotFound toast={toast} profile={profile} />} />
+      <Route path="/" element={Container(<Login toast={toast} />)} />
+      <Route path="/login" element={Container(<Login toast={toast} />)} />
+      <Route path="/signup" element={Container(<Signup toast={toast} />)} />
+      <Route path="/profile" element={Container(<Profile toast={toast} profile={profile} />)} />
+      <Route path="/search" element={Container(<Search toast={toast} profile={profile} />)} />
+      <Route path="/*" element={Container(<NotFound toast={toast} profile={profile} />)} />
     </Routes>
   );
 }

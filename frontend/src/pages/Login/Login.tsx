@@ -1,13 +1,12 @@
-import { RefObject, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
-import { Toast } from 'primereact/toast';
-
-import api from '../api/api';
-import Navbar from '../components/Navbar';
 import { PrimeIcons } from 'primereact/api';
 
-function Login({ toast }: { toast: RefObject<Toast> }) {
+import api from '../../api/api';
+import { PageProps } from '../../Pages';
+
+function Login({ toast }: PageProps) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -33,17 +32,14 @@ function Login({ toast }: { toast: RefObject<Toast> }) {
 
   return (
     <>
-      <Navbar toast={toast} />
-      <div id="content-container">
-        <h1>Login</h1>
-        <Button
-          icon={PrimeIcons.SIGN_IN}
-          onClick={() => submit('root3544@Zyxel.com', '1234') /* Replace this with proper submit call with user input */}
-          loading={loading}
-        >
-          Login
-        </Button>
-      </div>
+      <h1>Login</h1>
+      <Button
+        icon={PrimeIcons.SIGN_IN}
+        onClick={() => submit('root3544@Zyxel.com', '1234') /* Replace this with proper submit call with user input */}
+        loading={loading}
+      >
+        Login
+      </Button>
     </>
   );
 }

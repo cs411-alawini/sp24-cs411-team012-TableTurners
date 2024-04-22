@@ -1,9 +1,10 @@
 import { useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
+import { PrimeReactProvider } from 'primereact/api';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 
 import Pages from './Pages.tsx';
-import { PrimeReactProvider } from 'primereact/api';
 
 function App() {
   const toast = useRef<Toast>(null);
@@ -12,6 +13,7 @@ function App() {
     <>
       <PrimeReactProvider>
         <Toast ref={toast} />
+        <ConfirmDialog />
         <BrowserRouter>
           <Pages toast={toast} />
         </BrowserRouter>
