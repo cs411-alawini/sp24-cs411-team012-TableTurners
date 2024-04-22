@@ -9,7 +9,12 @@ export type History = Array<{ history_id: number; search_string: string; timesta
  */
 export default async function get_history(): Promise<History | undefined> {
   try {
-    const res = await axios.get('/api/history', { withCredentials: true });
+    const res = await axios({
+      method: 'get',
+      url: '/api/history',
+      timeout: 2000,
+      withCredentials: true,
+    });
     return res.data;
   } catch (error) {
     // Ignore if unauthorized (401), unknown error otherwise

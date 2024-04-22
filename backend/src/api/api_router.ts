@@ -16,6 +16,7 @@ import post_search from './post_search.js';
 import post_signup from './post_signup.js';
 import get_logout from './get_logout.js';
 import { DB } from '../init_db.js';
+import post_del_account from './post_del_account.js';
 
 const SESSION_LENGTH = 60 * 60 * 1000;
 
@@ -102,6 +103,7 @@ export default function createAPIRouter(logger: Logger, db_connection: DB, redis
   api_router.get('/stores', _auth_endpoint, get_stores(logger, db_connection));
   api_router.get('/foodgroups', _auth_endpoint, get_foodgroups(logger, db_connection));
 
+  api_router.post('/del_account', _auth_endpoint, post_del_account(logger, db_connection));
   api_router.post('/search', _auth_endpoint, post_search(logger, db_connection));
 
   return api_router;

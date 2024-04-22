@@ -46,7 +46,11 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
         // notify user of error
         console.error(error);
         if (needs_auth.includes(location.pathname)) {
-          toast.current?.show({ severity: 'error', summary: error.message, detail: 'Try again later' });
+          toast.current?.show({
+            severity: 'error',
+            summary: 'Failed to fetch account',
+            detail: `${error.message}. Try again later`,
+          });
         }
       });
   }, [location.pathname]);

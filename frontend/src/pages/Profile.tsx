@@ -11,6 +11,8 @@ import { History } from '../api/get_history';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 
 function convertDateString(date: string) {
   const format_config: Intl.DateTimeFormatOptions = {
@@ -22,11 +24,13 @@ function convertDateString(date: string) {
   };
   return new Date(date).toLocaleDateString(undefined, format_config);
 }
+
 function Profile({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
   if (!profile) return <Navbar toast={toast} profile={profile} />;
 
   const navigate = useNavigate();
   const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<History | undefined>(undefined);
 
   // Grab history on first load
@@ -34,9 +38,7 @@ function Profile({ toast, profile }: { toast: RefObject<Toast>; profile?: Profil
     api
       .get_history()
       .then((h) => {
-        // If unauthenticated, redirect to login
         if (!h) return navigate('/login');
-
         h.map((v) => {
           v.timestamp = convertDateString(v.timestamp);
         });
@@ -50,6 +52,30 @@ function Profile({ toast, profile }: { toast: RefObject<Toast>; profile?: Profil
       });
   }, []);
 
+  function delete_account() {
+    setLoading(true);
+    api
+      .post_del_account()
+      .then((success) => {
+        setLoading(false);
+        if (success) {
+          toast.current?.show({ severity: 'success', summary: 'Account Deleted' });
+          navigate('/signup');
+        } else {
+          toast.current?.show({ severity: 'success', summary: 'Failed to delete account', detail: 'Are you logged in?' });
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error(error);
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed to delete account',
+          detail: `${error.message}. Try again later`,
+        });
+      });
+  }
+
   return (
     <>
       <Navbar toast={toast} profile={profile} />
@@ -59,6 +85,21 @@ function Profile({ toast, profile }: { toast: RefObject<Toast>; profile?: Profil
       <p>Email Address: {profile.email_addr}</p>
       <p>Save History</p>
       <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
+      <br />
+      <ConfirmDialog />
+      <Button
+        severity="danger"
+        onClick={() => {
+          confirmDialog({
+            header: 'Delete Account ',
+            message: 'Are you sure you want to delete your account?',
+            accept: delete_account,
+          });
+        }}
+        loading={loading}
+      >
+        Delete Account
+      </Button>
 
       <h1>Search History</h1>
       <DataTable

@@ -1,4 +1,4 @@
-import { RefObject } from 'react';
+import { RefObject, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
@@ -8,18 +8,27 @@ import api from '../api/api';
 import { Button } from 'primereact/button';
 import { ProfileInfo } from '../api/get_profile';
 
-function Navbar({ profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
+function Navbar({ toast, profile }: { toast: RefObject<Toast>; profile?: ProfileInfo }) {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   function logout() {
+    setLoading(true);
     api
       .get_logout()
       .then(() => {
+        setLoading(false);
         navigate('/login');
       })
       .catch((error) => {
         // notify user of error
+        setLoading(false);
         console.error(error);
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed to logout',
+          detail: `${error.message}. Try again later`,
+        });
       });
   }
 
@@ -39,7 +48,9 @@ function Navbar({ profile }: { toast: RefObject<Toast>; profile?: ProfileInfo })
             <Link to={'/profile'} className="navlink">
               Profile ({profile?.first_name})
             </Link>
-            <Button onClick={() => logout()}>Logout</Button>
+            <Button onClick={() => logout()} loading={loading}>
+              Logout
+            </Button>
           </div>
         </div>
       </>
