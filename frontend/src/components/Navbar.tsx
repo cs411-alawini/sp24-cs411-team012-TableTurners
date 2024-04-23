@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { Dispatch, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { PrimeIcons } from 'primereact/api';
+import { Skeleton } from 'primereact/skeleton';
 
 import './navbar.css';
 
 import api from '../api/api';
-import { Button } from 'primereact/button';
-import { PrimeIcons } from 'primereact/api';
 import { PageProps } from '../Pages';
-import { Skeleton } from 'primereact/skeleton';
 
-function Navbar({ toast, profile, loadingProfile }: PageProps & { loadingProfile?: boolean }) {
+import { ProfileInfo } from '../api/get_profile';
+
+function Navbar({
+  toast,
+  profile,
+  loadingProfile,
+  updateProfile,
+}: PageProps & { loadingProfile?: boolean; updateProfile: Dispatch<ProfileInfo | undefined> }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -18,7 +25,10 @@ function Navbar({ toast, profile, loadingProfile }: PageProps & { loadingProfile
     setLoading(true);
     api
       .get_logout()
-      .then(() => navigate('/login'))
+      .then(() => {
+        updateProfile(undefined);
+        navigate('/login');
+      })
       .catch((error) => {
         // notify user of error
         console.error(error);
@@ -31,6 +41,7 @@ function Navbar({ toast, profile, loadingProfile }: PageProps & { loadingProfile
       .finally(() => setLoading(false));
   }
 
+  // If waiting for profile to load (could be logged in or not)
   if (loadingProfile) {
     return (
       <>
@@ -54,6 +65,7 @@ function Navbar({ toast, profile, loadingProfile }: PageProps & { loadingProfile
     );
   }
 
+  // If has profile (logged in)
   if (profile) {
     const logo_link = location.pathname === '/search' ? '/profile' : '/search';
     return (
@@ -80,6 +92,7 @@ function Navbar({ toast, profile, loadingProfile }: PageProps & { loadingProfile
     );
   }
 
+  // Otherwise logged out
   const logo_link = location.pathname === '/login' ? '/signup' : '/login';
   return (
     <>

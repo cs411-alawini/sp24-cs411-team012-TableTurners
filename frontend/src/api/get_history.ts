@@ -12,7 +12,7 @@ export default async function get_history(): Promise<History | undefined> {
     const res = await axios({
       method: 'get',
       url: '/api/history',
-      timeout: 2000,
+      timeout: 10000,
       withCredentials: true,
     });
     return res.data;

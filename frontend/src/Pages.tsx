@@ -71,7 +71,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
     }
     return (
       <>
-        <Navbar toast={toast} profile={profile} loadingProfile={loading} />
+        <Navbar toast={toast} profile={profile} loadingProfile={loading} updateProfile={setProfile} />
         {content}
         {load_screen}
       </>
