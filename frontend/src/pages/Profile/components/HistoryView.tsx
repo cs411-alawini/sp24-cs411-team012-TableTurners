@@ -1,6 +1,6 @@
 import { DataTable } from 'primereact/datatable';
 import { PageProps } from '../../../Pages';
-import { convertTimestamp } from '../../../utils/convert_date';
+import { convertTimestamp } from '../../../utils/convert_timestamp';
 import { Column } from 'primereact/column';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
