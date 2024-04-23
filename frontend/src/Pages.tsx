@@ -24,6 +24,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
   // Redirect from pages that need authenticate to /login if session is invalid
   // Redirects from /login and /signup to /profile if session is valid
   useEffect(() => {
+    setLoading(profile === undefined);
     const needs_auth = ['/profile', '/search'];
     const redirect_profile = ['/login', '/signup'];
 
