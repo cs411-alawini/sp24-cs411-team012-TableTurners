@@ -1,0 +1,177 @@
+#navparent {
+  overflow: hidden;
+  width: 100%;
+  top: 0;
+  left: 0;
+  box-shadow: 0px 1px 5px 0px var(--gray-100);
+  height: 6rem;
+  max-height: 6rem;
+  display: flex;
+  position: relative;
+  transition: max-height 0.2s;
+}
+
+#navleft,
+#navright {
+  height: 100%;
+  position: absolute;
+  align-items: center;
+  display: flex;
+  transition: left 0.2s, right 0.2s;
+}
+
+#navopen button {
+  display: none;
+}
+
+#navleft {
+  left: 5rem;
+}
+
+#navright {
+  right: 5rem;
+}
+
+#sitename {
+  height: 100%;
+  min-height: 4rem;
+  font-size: 2rem;
+  text-decoration: none;
+  color: var(--highlight-text-color);
+  transition: font-size 0.2s, text-align 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+#sitename {
+  padding: 0;
+}
+
+#sitename p {
+  margin: 0;
+}
+
+.navlink {
+  margin-right: 2rem;
+}
+
+.navlink {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.navlink:hover {
+  text-decoration: underline;
+}
+
+.navlink:active {
+  text-decoration: underline;
+}
+
+.activelink {
+  text-decoration: underline;
+}
+
+.activelink:hover {
+  cursor: default;
+}
+
+@media (max-width: 50rem) {
+  #navparent {
+    height: 4rem;
+    max-height: 4rem;
+  }
+
+  #navleft {
+    left: 1rem;
+  }
+
+  #navright {
+    right: 0rem;
+  }
+
+  #sitename {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 35rem) {
+  #navparent {
+    height: auto;
+    flex-direction: column;
+    max-height: 4rem;
+  }
+
+  #navleft,
+  #navright {
+    position: inherit;
+    right: 0;
+  }
+
+  #navright {
+    flex-direction: column;
+  }
+
+  #navopen {
+    height: 100%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    right: 2rem;
+  }
+
+  #navopen button {
+    display: flex;
+    transition: left 0.2s, right 0.2s;
+  }
+
+  #navopen button .p-button-icon {
+    margin-right: 0rem;
+  }
+
+  .navlink {
+    text-decoration: none;
+    margin-right: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    height: 2.5rem !important;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  .navlink div {
+    padding-left: 1rem;
+  }
+
+  .navlink:hover {
+    color: var(--primary-color-text);
+    background-color: var(--primary-color);
+    text-decoration: none;
+  }
+
+  .activelink {
+    color: var(--primary-color-text);
+    background-color: var(--primary-color);
+  }
+
+  .activelink button {
+    color: var(--primary-color-text) !important;
+  }
+
+  .navlink button {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+    font-weight: 400;
+    border-radius: 0;
+    border: none;
+    background: none;
+    padding-left: 1rem;
+  }
+
+  .navlink button:hover {
+    color: var(--primary-color-text);
+  }
+}

@@ -10,7 +10,7 @@ import Signup from './pages/Signup/Signup.tsx';
 import { ProfileInfo } from './api/get_profile.ts';
 
 import api from './api/api.ts';
-import Navbar from './components/Navbar.tsx';
+import Navbar from './components/Navbar/Navbar.tsx';
 
 export type PageProps = { toast: RefObject<Toast>; profile?: ProfileInfo };
 

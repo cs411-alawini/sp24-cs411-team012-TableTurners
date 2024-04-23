@@ -1,6 +1,7 @@
 html {
   padding: none;
   margin: none;
+  min-width: 20rem;
 }
 
 body {
@@ -8,6 +9,13 @@ body {
   margin: 0;
   top: 0;
   left: 0;
+  color: var(--text-color);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--highlight-text-color);
 }
 
 #content-container {
