@@ -22,7 +22,7 @@ h3 {
   margin: auto;
   max-width: 120rem;
   padding: 3rem 1rem;
-  transition: max-width 0.2s;
+  transition: margin 0.2s;
 }
 
 #profile-loading {
