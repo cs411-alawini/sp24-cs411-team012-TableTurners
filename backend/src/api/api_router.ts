@@ -6,17 +6,19 @@ import RedisStore from 'connect-redis';
 
 import { RedisClient } from '../init_redis.js';
 import { Logger } from '../logger.js';
+import { DB } from '../init_db.js';
 
 import get_foodgroups from './get_foodgroups.js';
 import get_history from './get_history.js';
+import get_logout from './get_logout.js';
 import get_profile from './get_profile.js';
 import get_stores from './get_stores.js';
+import post_del_account from './post_del_account.js';
 import post_login from './post_login.js';
 import post_search from './post_search.js';
+import post_search_budget from './post_search_budget.js';
 import post_signup from './post_signup.js';
-import get_logout from './get_logout.js';
-import { DB } from '../init_db.js';
-import post_del_account from './post_del_account.js';
+import post_set_save_hist from './post_set_save_hist.js';
 
 const SESSION_LENGTH = 60 * 60 * 1000;
 
@@ -105,6 +107,8 @@ export default function createAPIRouter(logger: Logger, db_connection: DB, redis
 
   api_router.post('/del_account', _auth_endpoint, post_del_account(logger, db_connection));
   api_router.post('/search', _auth_endpoint, post_search(logger, db_connection));
+  api_router.post('/set_save_hist', _auth_endpoint, post_set_save_hist(logger, db_connection));
+  api_router.post('/search_budget', _auth_endpoint, post_search_budget(logger, db_connection));
 
   return api_router;
 }
