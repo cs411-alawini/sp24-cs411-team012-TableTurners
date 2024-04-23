@@ -20,8 +20,9 @@ h3 {
 
 #content-container {
   margin: auto;
-  max-width: 100rem;
+  max-width: 120rem;
   padding: 3rem 1rem;
+  transition: max-width 0.2s;
 }
 
 #profile-loading {
@@ -40,4 +41,32 @@ h3 {
 /* Fix for button icons */
 .p-button-icon {
   margin-right: 0.5rem;
+}
+
+@media (max-width: 140rem) {
+  #content-container {
+    max-width: 120rem;
+    margin: 0 10rem;
+  }
+}
+
+@media (max-width: 80rem) {
+  #content-container {
+    max-width: 76rem;
+    margin: 0 5rem;
+  }
+}
+
+@media (max-width: 50rem) {
+  #content-container {
+    max-width: 45rem;
+    margin: 0 2rem;
+  }
+}
+
+
+@media (max-width: 35rem) {
+  #content-container {
+    margin: 0 0.5rem;
+  }
 }
