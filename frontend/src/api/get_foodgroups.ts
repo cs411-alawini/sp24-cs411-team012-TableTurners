@@ -1,13 +1,16 @@
 import axios from 'axios';
 
+export type FoodGroups = Array<string>;
+
 /**
  * get_foodgroups()
  * GET /api/foodgroups endpoint
  * @returns idk something
  */
-export default async function get_foodgroups(): Promise<void> {
+export default async function get_foodgroups(): Promise<FoodGroups | undefined> {
   try {
-    //
+    const res = await axios({ method: 'get', url: '/api/foodgroups', timeout: 2000, withCredentials: true });
+    return res.data;
   } catch (error) {
     // Ignore if unauthorized (401), unknown error otherwise
     if (axios.isAxiosError(error) && error.response && error.response.status === 401) return;

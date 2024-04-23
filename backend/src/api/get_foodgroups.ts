@@ -11,5 +11,17 @@ import { DB } from '../init_db.js';
  * @returns express request handler
  */
 export default function get_foodgroups(logger: Logger, db_connection: DB): RequestHandler {
-  return (req, res) => {};
+  return async (req, res) => {
+    let response;
+    try {
+      [response] = await db_connection.execute('SHOW COLUMNS FROM FoodGroup WHERE Type = "tinyint(1)";');
+    } catch (error) {
+      logger.error('Failed to fetch food groups.', error);
+      res.status(500).send();
+      return;
+    }
+
+    const stores = response.map(({ Field }) => Field);
+    res.status(200).send(stores);
+  };
 }

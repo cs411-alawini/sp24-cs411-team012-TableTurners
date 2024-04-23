@@ -17,14 +17,13 @@ export type PageProps = { toast: RefObject<Toast>; profile?: ProfileInfo };
 function Pages({ toast }: { toast: RefObject<Toast> }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<ProfileInfo | undefined>();
 
   // Load user profile on each location change
   // Redirect from pages that need authenticate to /login if session is invalid
   // Redirects from /login and /signup to /profile if session is valid
   useEffect(() => {
-    setLoading(true);
     const needs_auth = ['/profile', '/search'];
     const redirect_profile = ['/login', '/signup'];
 
@@ -62,7 +61,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
     let load_screen = <></>;
     if (show_load) {
       load_screen = (
-        <div id="profile-loading" style={{ opacity: loading ? 0.25 : 0, pointerEvents: loading ? 'all' : 'none' }}>
+        <div id="profile-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
           <div>
             <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
           </div>

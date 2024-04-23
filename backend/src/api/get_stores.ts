@@ -11,5 +11,17 @@ import { DB } from '../init_db.js';
  * @returns express request handler
  */
 export default function get_stores(logger: Logger, db_connection: DB): RequestHandler {
-  return (req, res) => {};
+  return async (req, res) => {
+    let response;
+    try {
+      [response] = await db_connection.execute('SELECT store_name FROM Stores;');
+    } catch (error) {
+      logger.error('Failed to fetch store names.', error);
+      res.status(500).send();
+      return;
+    }
+
+    const stores = response.map(({ store_name }) => store_name);
+    res.status(200).send(stores);
+  };
 }
