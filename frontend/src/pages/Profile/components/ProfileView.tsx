@@ -20,7 +20,6 @@ export default function ProfileView({ toast, profile }: PageProps) {
     api
       .post_del_account()
       .then((success) => {
-        setLoading(false);
         if (success) {
           toast.current?.show({ severity: 'success', summary: 'Account Deleted' });
           navigate('/signup');
@@ -29,14 +28,14 @@ export default function ProfileView({ toast, profile }: PageProps) {
         }
       })
       .catch((error) => {
-        setLoading(false);
         console.error(error);
         toast.current?.show({
           severity: 'error',
           summary: 'Failed to delete account',
           detail: `${error.message}. Try again later`,
         });
-      });
+      })
+      .finally(() => setLoading(false));
   }
 
   return (

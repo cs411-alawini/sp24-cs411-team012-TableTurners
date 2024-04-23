@@ -19,15 +19,14 @@ function Login({ toast }: PageProps) {
           // notify user of incorrect email/password
           return;
         }
-        setLoading(false);
         navigate('/profile');
       })
       .catch((error) => {
         // notify user of error
-        setLoading(false);
         console.error(error);
         toast.current?.show({ severity: 'error', summary: 'Failed to log in', detail: `${error.message}. Try again later` });
-      });
+      })
+      .finally(() => setLoading(false));
   }
 
   return (

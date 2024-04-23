@@ -16,6 +16,19 @@ body {
   padding: 3rem 1rem;
 }
 
+#profile-loading {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s;
+}
+
 /* Fix for button icons */
 .p-button-icon {
   margin-right: 0.5rem;

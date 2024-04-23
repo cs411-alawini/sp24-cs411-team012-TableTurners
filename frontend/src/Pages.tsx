@@ -17,12 +17,14 @@ export type PageProps = { toast: RefObject<Toast>; profile?: ProfileInfo };
 function Pages({ toast }: { toast: RefObject<Toast> }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<ProfileInfo | undefined>();
 
   // Load user profile on each location change
   // Redirect from pages that need authenticate to /login if session is invalid
   // Redirects from /login and /signup to /profile if session is valid
   useEffect(() => {
+    setLoading(true);
     const needs_auth = ['/profile', '/search'];
     const redirect_profile = ['/login', '/signup'];
 
@@ -51,26 +53,39 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
             detail: `${error.message}. Try again later`,
           });
         }
-      });
+      })
+      .finally(() => setLoading(false));
   }, [location.pathname]);
 
-  const Container = (PageComponent: JSX.Element) => {
+  const Container = (PageComponent: JSX.Element, show_load: boolean) => {
+    const content = loading && show_load ? <></> : <div id="content-container">{PageComponent}</div>;
+    let load_screen = <></>;
+    if (show_load) {
+      load_screen = (
+        <div id="profile-loading" style={{ opacity: loading ? 0.25 : 0, pointerEvents: loading ? 'all' : 'none' }}>
+          <div>
+            <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
+          </div>
+        </div>
+      );
+    }
     return (
       <>
-        <Navbar toast={toast} profile={profile} />
-        <div id="content-container">{PageComponent}</div>
+        <Navbar toast={toast} profile={profile} loadingProfile={loading} />
+        {content}
+        {load_screen}
       </>
     );
   };
 
   return (
     <Routes>
-      <Route path="/" element={Container(<Login toast={toast} />)} />
-      <Route path="/login" element={Container(<Login toast={toast} />)} />
-      <Route path="/signup" element={Container(<Signup toast={toast} />)} />
-      <Route path="/profile" element={Container(<Profile toast={toast} profile={profile} />)} />
-      <Route path="/search" element={Container(<Search toast={toast} profile={profile} />)} />
-      <Route path="/*" element={Container(<NotFound toast={toast} profile={profile} />)} />
+      <Route path="/" element={Container(<Login toast={toast} />, false)} />
+      <Route path="/login" element={Container(<Login toast={toast} />, false)} />
+      <Route path="/signup" element={Container(<Signup toast={toast} />, false)} />
+      <Route path="/profile" element={Container(<Profile toast={toast} profile={profile} />, true)} />
+      <Route path="/search" element={Container(<Search toast={toast} profile={profile} />, true)} />
+      <Route path="/*" element={Container(<NotFound toast={toast} profile={profile} />, false)} />
     </Routes>
   );
 }
