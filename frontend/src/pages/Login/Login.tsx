@@ -6,6 +6,12 @@ import { InputText } from 'primereact/inputtext';			// React input text box UI c
 import api from '../../api/api';											// Imports API given by project
 import { PageProps } from '../../Pages';							// Contains props passed to pages in application
 
+/* 
+	Keeping these for now, in case there are more complaints about types
+	const [inputEmail, setInputEmail]: [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input email value, and defines function to handle changes to element
+	const [inputPassword, setInputPassword]: [string, React.Dispatch<React.SetStateAction<string>>] = useState( '' );			// Holds input password value, and defines function to handle changes to element
+*/
+
 function Login({ toast }: PageProps) {
   const navigate = useNavigate();
   const [loading, setLoading] 		= useState( false );
