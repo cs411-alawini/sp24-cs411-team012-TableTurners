@@ -141,7 +141,7 @@ function Navbar({
             <p>Grocery Aid</p>
           </Link>
           <div id="navopen">
-            <Button onClick={() => setNavOpen(!navOpen)} icon={PrimeIcons.BARS}></Button>
+            <Button onClick={() => setNavOpen(!navOpen)} icon={navOpen ? PrimeIcons.TIMES : PrimeIcons.BARS}></Button>
           </div>
         </div>
         <div id="navright">{nav_links}</div>
