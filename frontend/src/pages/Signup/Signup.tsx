@@ -40,8 +40,20 @@ function Signup({ toast }: PageProps) {
     setLoading( true );
     api
       .post_signup( email, password, firstName, lastName )
-    return;
-
+      .then( (success) => {
+        if ( !success )
+          // notify user of error
+        return;
+        
+        /* Profile successfully created, navigate to profile page */
+        navigate( '/profile' );
+      })
+    .catch((error) => {
+      // notify user of error
+      console.error(error);
+      toast.current?.show({ severity: 'error', summary: 'Failed to log in', detail: `${error.message}. Try again later` });
+    })
+    .finally(() => setLoading(false));
   }
 
   return (
