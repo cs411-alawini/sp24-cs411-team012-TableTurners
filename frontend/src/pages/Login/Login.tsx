@@ -13,7 +13,8 @@ import { PageProps } from '../../Pages';							// Contains props passed to pages
 */
 
 function Login({ toast }: PageProps) {
-  const navigate = useNavigate();
+  
+	const navigate = useNavigate();
   const [loading, setLoading] 		= useState( false );
 	const [inputEmail, setInputEmail]: [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input email value, and defines function to handle changes to element
 	const [inputPassword, setInputPassword]: [string, React.Dispatch<React.SetStateAction<string>>] = useState( '' );			// Holds input password value, and defines function to handle changes to element
@@ -78,10 +79,9 @@ function Login({ toast }: PageProps) {
 			</span>	
 		</div>
 	  { /* Button element to initiate login*/ }
-		{/*'root3544@Zyxel.com', '1234' is example email/pass*/}
 	  <Button
         icon={PrimeIcons.SIGN_IN}
-        onClick={() => submit() /* Replace this with proper submit call with user input */}
+        onClick={ () => submit() }
         loading={loading}
       >
         Login
