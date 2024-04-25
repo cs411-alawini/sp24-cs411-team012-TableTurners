@@ -5,6 +5,9 @@ import { PrimeIcons } from 'primereact/api';					// Provides set of icon names
 import { InputText } from 'primereact/inputtext';			// React input text box UI component
 import api from '../../api/api';											// Imports API given by project
 import { PageProps } from '../../Pages';							// Contains props passed to pages in application
+import { Message } from 'primereact/message';
+
+
 
 /* 
 	Keeping these for now, in case there are more complaints about types
@@ -15,9 +18,14 @@ import { PageProps } from '../../Pages';							// Contains props passed to pages
 function Login({ toast }: PageProps) {
   
 	const navigate = useNavigate();
-  const [loading, setLoading] 		= useState( false );
+
+	const [loading, setLoading] 		= useState( false );
 	const [inputEmail, setInputEmail]: [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input email value, and defines function to handle changes to element
 	const [inputPassword, setInputPassword]: [string, React.Dispatch<React.SetStateAction<string>>] = useState( '' );			// Holds input password value, and defines function to handle changes to element
+
+	const [showEmailError, setShowEmailError] = useState( false );
+	const [showPasswordError, setShowPasswordError] = useState( false );
+	
 
 	/* Sets the const email upon new text being entered into the corresponding text box */
 	function handleEmailChange( event: React.ChangeEvent<HTMLInputElement> ) {		
@@ -36,6 +44,7 @@ function Login({ toast }: PageProps) {
       .post_login(inputEmail, inputPassword)
       .then((authenticated) => {
         console.log( authenticated );
+				setShowEmailError( !showEmailError );
 				if (!authenticated) {
           // notify user of incorrect email/password
           return;
@@ -64,6 +73,7 @@ function Login({ toast }: PageProps) {
 					value 			= { inputEmail }
 					onChange		= { handleEmailChange }
 				/>
+				{ showEmailError && ( <Message severity='error' text='An error occurred with Email!'/>)}
 			</span>
 		</div>
 		<div>
