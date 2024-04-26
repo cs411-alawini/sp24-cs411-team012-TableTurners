@@ -1,5 +1,4 @@
 import { useState } from 'react';											// React hook used for managing state within functional components
-import { useNavigate } from 'react-router-dom';				// React hook for navigation within the application, provided by React Router DOM
 import { Button } from 'primereact/button';						// React button UI component
 import { PrimeIcons } from 'primereact/api';					// Provides set of icon names
 import { InputText } from 'primereact/inputtext';			// React input text box UI component
@@ -9,7 +8,6 @@ import { Message } from 'primereact/message';         // React message component
 
 function Signup({ toast }: PageProps) {
   
-	const navigate                  = useNavigate();                                                                // Navigation object for page redirection
   const [loading, setLoading] 		= useState( false );                                                            // State object for button loading
   const [email, setEmail]:          [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input email_addr value, and defines function to handle changes to element
   const [firstName, setFirstName]:  [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input first_name value, and defines function to handle changes to element
