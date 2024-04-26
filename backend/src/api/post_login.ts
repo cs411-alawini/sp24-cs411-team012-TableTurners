@@ -10,13 +10,20 @@ import { DB } from '../init_db.js';
  * @param logger logger
  * @param db_connection connection to mysql database
  * @returns express request handler
+ *
+ * Test Login (this should work):
+ * email_addr: admin0@3COM.com
+ * password: 1234admin
+ * Note that password and password_hash are different. The API will
+ * call a hasher to hash the password put in by the user, and compare
+ * to the value in the database.
  */
 export default function post_login(logger: Logger, db_connection: DB): RequestHandler {
   return async (req, res) => {
     const { email, password } = req.body;
 
     // Missing fields, bad request
-    if (email === undefined || password === undefined) {
+    if (email === '' || password === '') {
       logger.debug('Invalid request, missing email or password');
       res.status(400).send();
       return;

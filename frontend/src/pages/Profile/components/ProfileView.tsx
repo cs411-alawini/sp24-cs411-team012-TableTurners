@@ -23,7 +23,7 @@ export default function ProfileView({ toast, profile }: PageProps) {
         if (success) {
           toast.current?.show({ severity: 'success', summary: 'Save History Updated' });
         } else {
-          toast.current?.show({ severity: 'success', summary: 'Failed to toggle save history'});
+          toast.current?.show({ severity: 'success', summary: 'Failed to toggle save history' });
         }
       })
       .catch((error) => {
@@ -76,7 +76,13 @@ export default function ProfileView({ toast, profile }: PageProps) {
         <p style={{ marginRight: '0.5rem' }}>
           <b>Save History </b>
         </p>
-        <InputSwitch checked={checked} onChange={(e) => {setChecked(e.value); handleSaveHistoryChange();}} />
+        <InputSwitch
+          checked={checked}
+          onChange={(e) => {
+            setChecked(e.value);
+            handleSaveHistoryChange();
+          }}
+        />
       </div>
       <Divider />
       <div style={{ width: '100%', display: 'flex', justifyContent: 'right' }}>
