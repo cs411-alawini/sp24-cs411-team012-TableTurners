@@ -23,7 +23,7 @@ export default function post_login(logger: Logger, db_connection: DB): RequestHa
     const { email, password } = req.body;
 
     // Missing fields, bad request
-    if (email === undefined || password === undefined) {
+    if (email === '' || password === '') {
       logger.debug('Invalid request, missing email or password');
       res.status(400).send();
       return;
