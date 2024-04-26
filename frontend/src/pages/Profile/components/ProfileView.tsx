@@ -12,8 +12,30 @@ import { PageProps } from '../../../Pages';
 export default function ProfileView({ toast, profile }: PageProps) {
   if (!profile) return <></>;
   const navigate = useNavigate();
-  const [checked, setChecked] = useState(profile.save_history);
+  const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  function handleSaveHistoryChange() {
+    setLoading(true);
+    api
+      .post_set_save_hist()
+      .then((success) => {
+        if (success) {
+          toast.current?.show({ severity: 'success', summary: 'Save History Updated' });
+        } else {
+          toast.current?.show({ severity: 'success', summary: 'Failed to toggle save history'});
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed to update Save History',
+          detail: `${error.message}. Try again later`,
+        });
+      })
+      .finally(() => setLoading(false));
+  }
 
   function delete_account() {
     setLoading(true);
@@ -52,9 +74,9 @@ export default function ProfileView({ toast, profile }: PageProps) {
       <Divider />
       <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
         <p style={{ marginRight: '0.5rem' }}>
-          <b>Save History: </b>
+          <b>Save History </b>
         </p>
-        <InputSwitch checked={checked} onChange={(e) => setChecked(e.value)} />
+        <InputSwitch checked={checked} onChange={(e) => {setChecked(e.value); handleSaveHistoryChange();}} />
       </div>
       <Divider />
       <div style={{ width: '100%', display: 'flex', justifyContent: 'right' }}>
