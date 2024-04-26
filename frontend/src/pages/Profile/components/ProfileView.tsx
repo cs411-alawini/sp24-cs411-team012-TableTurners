@@ -12,7 +12,7 @@ import { PageProps } from '../../../Pages';
 export default function ProfileView({ toast, profile }: PageProps) {
   if (!profile) return <></>;
   const navigate = useNavigate();
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(profile.save_history);
   const [loading, setLoading] = useState(false);
 
   function handleSaveHistoryChange() {
