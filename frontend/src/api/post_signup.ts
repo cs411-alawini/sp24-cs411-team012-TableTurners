@@ -14,14 +14,22 @@ export default async function post_signup(
   password: string,
   first_name: string,
   last_name: string,
-): Promise<boolean> {
+): Promise<number> {
+  /* Submit data to API and wait for response */
   try {
-    //
+    await axios({
+      method: 'post',
+      url: '/api/signup',
+      timeout: 2000,
+      data: { email, password, first_name, last_name }
+    });
+  /* Catch error if present */
   } catch (error) {
     // Incorrect email/password if 401, unknown error otherwise
-    if (axios.isAxiosError(error) && error.response && error.response.status === 401) return false;
+    if (axios.isAxiosError(error) && error.response && error.response.status === 401) return error.response.status;
     throw error;
   }
 
-  return true;
+    /* No error, indicate profile was created */
+  return 201;
 }
