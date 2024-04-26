@@ -57,6 +57,8 @@ function Login({ toast }: PageProps) {
 					setShowErrorMsg( true );
 				}
 				else{
+					setErrorText( 'An unknown error has occurred.' );
+					setShowErrorMsg( true );
 					return;
 				}
       })
