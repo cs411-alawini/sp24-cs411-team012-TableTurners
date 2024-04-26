@@ -10,7 +10,7 @@ import { DB } from '../init_db.js';
  * @param logger logger
  * @param db_connection connection to mysql database
  * @returns express request handler
- * 
+ *
  * Test Login (this should work):
  * email_addr: admin0@3COM.com
  * password: 1234admin

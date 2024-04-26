@@ -21,15 +21,16 @@ export default async function post_signup(
       method: 'post',
       url: '/api/signup',
       timeout: 2000,
-      data: { email, password, first_name, last_name }
+      data: { email, password, first_name, last_name },
     });
-  /* Catch error if present */
+    /* Catch error if present */
   } catch (error) {
     // Incorrect email/password if 401, unknown error otherwise
-    if ( axios.isAxiosError(error) && error.response && ( error.response.status === 400 || error.response.status === 500 ) ) return error.response.status;
+    if (axios.isAxiosError(error) && error.response && (error.response.status === 400 || error.response.status === 500))
+      return error.response.status;
     throw error;
   }
 
-    /* No error, indicate profile was created */
+  /* No error, indicate profile was created */
   return 201;
 }

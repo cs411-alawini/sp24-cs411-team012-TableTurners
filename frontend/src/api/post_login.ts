@@ -16,12 +16,16 @@ export default async function post_login(email: string, password: string): Promi
       timeout: 2000,
       data: { email, password },
     });
-  /* Catch error if present */
+    /* Catch error if present */
   } catch (error) {
     // Return known error codes (400, 401, 500). Otherwise, pass error code on bc
     // the error is unknown.
-    if ( axios.isAxiosError(error) && error.response && ( 
-      (error.response.status === 401) || (error.response.status === 400) || (error.response.status === 500)) ) return error.response.status;
+    if (
+      axios.isAxiosError(error) &&
+      error.response &&
+      (error.response.status === 401 || error.response.status === 400 || error.response.status === 500)
+    )
+      return error.response.status;
     throw error;
   }
 

@@ -16,39 +16,39 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
     const { email, password, first_name, last_name } = req.body;
 
     // Missing fields, bad request
-    if ( email === '' || password === '' || first_name === ''|| last_name === '' ){
-      logger.debug( 'Invalid request, missing email or password' );
-      res.status( 400 ).send();
+    if (email === '' || password === '' || first_name === '' || last_name === '') {
+      logger.debug('Invalid request, missing email or password');
+      res.status(400).send();
       return;
     }
 
     /* Hash the password */
-    async function hashPassword( password: string ): Promise<string> {
-      try{
+    async function hashPassword(password: string): Promise<string> {
+      try {
         /* Hash using Argon2 */
-        const hashedPassword = await argon2.hash( password );
+        const hashedPassword = await argon2.hash(password);
         return hashedPassword;
-      } catch( error ){
+      } catch (error) {
         /* Handle error if hashing fails */
-        logger.error( 'Failed to hash password' );
+        logger.error('Failed to hash password');
         throw error;
       }
     }
 
-    let response;
-    try{
-      const hashedPassword = await hashPassword( password );
-      [response] = await db_connection.execute( 'INSERT INTO Accounts (email_addr, password_hash, first_name, last_name) VALUES (?, ?, ?, ?);', [email, hashedPassword, first_name, last_name]);
-    } catch( error ){
-      console.log( error );
-      logger.error( 'An error occurred when submitting the record' );
-      res.status( 500 ).send();
+    try {
+      const hashedPassword = await hashPassword(password);
+      await db_connection.execute(
+        'INSERT INTO Accounts (email_addr, password_hash, first_name, last_name) VALUES (?, ?, ?, ?);',
+        [email, hashedPassword, first_name, last_name],
+      );
+    } catch (error) {
+      console.log(error);
+      logger.error('An error occurred when submitting the record');
+      res.status(500).send();
       return;
     }
 
-    res.status( 201 ).send();
+    res.status(201).send();
     return;
-
-
   };
 }
