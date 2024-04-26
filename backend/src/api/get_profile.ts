@@ -41,7 +41,7 @@ export default function get_profile(logger: Logger, db_connection: DB): RequestH
       return;
     }
 
-    const { first_name, last_name, email_addr, save_hist } = response[0];
-    res.send({ first_name, last_name, email_addr, save_history: save_hist !== 0 });
+    const { first_name, last_name, email_addr, save_history } = response[0];
+    res.send({ first_name, last_name, email_addr, save_history: save_history !== 0 });
   };
 }
