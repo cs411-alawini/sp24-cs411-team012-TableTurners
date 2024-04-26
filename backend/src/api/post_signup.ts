@@ -27,7 +27,6 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
       try{
         /* Hash using Argon2 */
         const hashedPassword = await argon2.hash( password );
-        console.log( hashedPassword );
         return hashedPassword;
       } catch( error ){
         /* Handle error if hashing fails */
