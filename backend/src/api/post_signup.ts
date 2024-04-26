@@ -42,7 +42,7 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
     } catch( error ){
       console.log( error );
       logger.error( 'An error occurred when submitting the record' );
-      res.status( 400 ).send();
+      res.status( 500 ).send();
       return;
     }
 

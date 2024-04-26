@@ -26,7 +26,7 @@ export default async function post_signup(
   /* Catch error if present */
   } catch (error) {
     // Incorrect email/password if 401, unknown error otherwise
-    if (axios.isAxiosError(error) && error.response && error.response.status === 401) return error.response.status;
+    if ( axios.isAxiosError(error) && error.response && ( error.response.status === 400 || error.response.status === 500 ) ) return error.response.status;
     throw error;
   }
 

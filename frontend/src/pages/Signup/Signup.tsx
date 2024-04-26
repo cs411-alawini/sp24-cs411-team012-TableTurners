@@ -5,16 +5,21 @@ import { PrimeIcons } from 'primereact/api';					// Provides set of icon names
 import { InputText } from 'primereact/inputtext';			// React input text box UI component
 import api from '../../api/api';											// Imports API given by project
 import { PageProps } from '../../Pages';							// Contains props passed to pages in application
+import { Message } from 'primereact/message';         // React message component to display messages on screen when appropriate
 
 function Signup({ toast }: PageProps) {
   
-	const navigate                  = useNavigate();
-  const [loading, setLoading] 		= useState( false );
+	const navigate                  = useNavigate();                                                                // Navigation object for page redirection
+  const [loading, setLoading] 		= useState( false );                                                            // State object for button loading
   const [email, setEmail]:          [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input email_addr value, and defines function to handle changes to element
   const [firstName, setFirstName]:  [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input first_name value, and defines function to handle changes to element
   const [lastName, setLastName]:    [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input first_name value, and defines function to handle changes to element
   const [password, setPassword]:    [string, React.Dispatch<React.SetStateAction<string>>]	= useState( '' );			// Holds input first_name value, and defines function to handle changes to element
   
+	const [errorText, setErrorText] = useState<string>('');	                                                        // Holds appropriate text for error msg, and function to set it
+	const [showErrorMsg, setShowErrorMsg] = useState( false );                                                      // Holds state of error msg (shown or hidden), and function to set it
+	const [showSuccessMsg, setShowSuccessMsg] = useState( false );                                                  // Holds state of success msg (shown or hidden), and function to set it
+
 	/* Sets the const email upon new text being entered into the corresponding text box */
 	function handleEmailChange( event: React.ChangeEvent<HTMLInputElement> ) {		
 		setEmail( event.target.value )
@@ -37,16 +42,37 @@ function Signup({ toast }: PageProps) {
 
   /* Submits the user information to API for processing */
   function submit(){
+    /* Set button as loading and hide messages */
     setLoading( true );
+    setShowErrorMsg( false );
+    setShowSuccessMsg( false );
+    /* Call API method to submit request and evaluate returned status */
     api
       .post_signup( email, password, firstName, lastName )
-      .then( (success) => {
-        if ( !success )
-          // notify user of error
+      .then( (response_status) => {
+        /* Evaluate return status */
+        if( response_status === 201 ){
+          /* Successful */
+          setShowSuccessMsg( true );
+        }
+        else if( response_status === 400 ){
+          /* Bad Request (Client-Sided) */
+          setErrorText( 'Missing information. Please fill out the appropriate field and try again!');
+          setShowErrorMsg( true );
+        }
+        else if ( response_status === 500 ){
+          /* Internal server Error */
+          setErrorText( 'The user may already exist or the password failed to hash. Please try again!' );
+          setShowErrorMsg( true );
+        }
+        else{
+          setErrorText( 'An unknown error has occurred.' );
+          setShowErrorMsg( true );
+        }
+
         return;
-        
-        /* Profile successfully created, navigate to profile page */
-        navigate( '/profile' );
+
+
       })
     .catch((error) => {
       // notify user of error
@@ -112,7 +138,12 @@ function Signup({ toast }: PageProps) {
       >
         Submit
       </Button>
-
+      { /* Message object for error message */}
+		  { showErrorMsg && ( <Message severity = 'error' text = { errorText } /> ) }
+      <div>
+        { /* Message object for success message */ }
+        { showSuccessMsg && ( <Message severity = 'success' text = 'Profile successfully created! Please navigate to Login page to log in.' /> ) }
+      </div>
     </>
   );
 }
