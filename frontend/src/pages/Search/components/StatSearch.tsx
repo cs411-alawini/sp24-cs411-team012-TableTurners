@@ -30,8 +30,17 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
   const [searchResults, setSearchResults] = useState<StatResults | undefined>();
 
   function search() {
+    if (searchString === '') {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Search string cannot be empty',
+      });
+      return;
+    }
+
     setSearchResults(undefined);
     setLoading(true);
+
     api
       .post_search_stats(searchString)
       .then((results) => {
@@ -120,7 +129,13 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
           onChange={(e) => setSearchString(e.target.value)}
           style={{ flexGrow: 1, margin: '0 0.5rem 0 0' }}
         />
-        <Button icon={PrimeIcons.SEARCH} loading={loading} onClick={search}>
+        <Button
+          icon={PrimeIcons.SEARCH}
+          loading={loading}
+          onClick={(e) => {
+            search(), e.preventDefault();
+          }}
+        >
           Search
         </Button>
       </form>
