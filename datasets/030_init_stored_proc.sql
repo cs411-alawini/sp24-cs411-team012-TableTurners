@@ -4,7 +4,8 @@
 
 USE `Grocery-Aid-Database`;
 
--- Probability you'll find given item in each store + for each one with prob > 0 => where it lies in the price distribution of given store (or maybe price distribution of that item)?
+-- Get average price and count of a given product search as well as the overall statistics for each store
+-- for user to compare product price against rest of store
 DELIMITER //
 CREATE PROCEDURE GetItemStats (
   IN search VARCHAR(256)
@@ -23,6 +24,7 @@ BEGIN
   DECLARE bucket_end INT;
   DECLARE bucket_done INT DEFAULT 0;
   
+  -- Grab price statistics for each store
   DECLARE stat_cur CURSOR FOR (
     SELECT Stores.store_id, AVG(Products.price), STD(Products.price), MIN(Products.price), MAX(Products.price), COUNT(*)
     FROM Products JOIN Stores
@@ -31,7 +33,7 @@ BEGIN
   );
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET stat_done = 1;
 
-  DROP TEMPORARY TABLE IF EXISTS ItemStats;
+  -- Temporary table to store result
   CREATE TEMPORARY TABLE ItemStats (
     store_id      INT,
     avg_price     REAL,
@@ -44,6 +46,7 @@ BEGIN
   -- Create buckets in table for histogram
   SET bucket_start = -3;
   SET bucket_end = -2;
+  -- Need to use a prepared statement to create columns with variable name
   SET @sql = CONCAT('ALTER TABLE ItemStats ADD `(min)-(', bucket_start, ')` INT DEFAULT 0;');
   PREPARE stmt FROM @sql;
   EXECUTE stmt;
@@ -67,34 +70,32 @@ BEGIN
   EXECUTE stmt;
   DEALLOCATE PREPARE stmt;
 
-  -- For each store, fill buckets
+  -- For each store, fill table entry
   OPEN stat_cur;
   FETCH stat_cur INTO curr_sid, curr_avg, curr_std, curr_min, curr_max, curr_cnt;
   REPEAT
+    -- First insert the price statistics into the table
     INSERT INTO ItemStats(store_id, avg_price, std_price, min_price, max_price, total_count)
     VALUES(curr_sid, curr_avg, curr_std, curr_min, curr_max, curr_cnt);
 
-    -- Iterate through buckets and count number of items 
+    -- Iterate through buckets and count number of items per bucket
     SET bucket_start = -3;
     SET bucket_end = -2;
     SET bucket_done = 0;
+
     -- Do the left tail
-    SELECT COUNT(*) 
-    INTO curr_cnt
-    FROM Products
+    SELECT COUNT(*) INTO curr_cnt FROM Products
     WHERE price <= curr_avg + bucket_start * curr_std AND store_id = curr_sid;
+    -- Prepared statements required again
     SET @sql = CONCAT('UPDATE ItemStats SET `(min)-(', bucket_start, ')` = ', curr_cnt ,' WHERE store_id = ', curr_sid, ';');
     PREPARE stmt FROM @sql;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;  
+    -- Do all the inner buckets
     REPEAT
-      SELECT COUNT(*) 
-      INTO curr_cnt
-      FROM Products
-      WHERE price > curr_avg + bucket_start * curr_std
-        AND price <= curr_avg + bucket_end * curr_std
-        AND store_id = curr_sid;
-      
+      SELECT COUNT(*)  INTO curr_cnt FROM Products
+      WHERE price > curr_avg + bucket_start * curr_std AND price <= curr_avg + bucket_end * curr_std AND store_id = curr_sid;
+      --
       SET @sql = CONCAT('UPDATE ItemStats SET `(', bucket_start, ')-(', bucket_end, ')` = ', curr_cnt ,' WHERE store_id = ', curr_sid, ';');
       PREPARE stmt FROM @sql;
       EXECUTE stmt;
@@ -108,11 +109,11 @@ BEGIN
       SET bucket_end = bucket_end + 1;
     UNTIL bucket_done
     END REPEAT;
+
     -- Do the right tail
-    SELECT COUNT(*) 
-    INTO curr_cnt
-    FROM Products
+    SELECT COUNT(*) INTO curr_cnt FROM Products
     WHERE price > curr_avg + bucket_end * curr_std AND store_id = curr_sid;
+    --
     SET @sql = CONCAT('UPDATE ItemStats SET `(', bucket_start, ')-(max)` = ', curr_cnt ,' WHERE store_id = ', curr_sid, ';');
     PREPARE stmt FROM @sql;
     EXECUTE stmt;
@@ -122,7 +123,7 @@ BEGIN
   UNTIL stat_done
   END REPEAT;
 
-  -- Get Results
+  -- This forms the results by joining the temporary table with the product statistics (average price and count of that product per store)
   SELECT *
   FROM ItemStats NATURAL JOIN (
     SELECT 
@@ -136,6 +137,7 @@ BEGIN
     GROUP BY Stores.store_id
   ) AS ProductProb;
 
+  -- Remove temporary table
   DROP TEMPORARY TABLE IF EXISTS ItemStats;
 END //
 DELIMITER ;
