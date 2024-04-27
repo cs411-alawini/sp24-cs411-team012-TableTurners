@@ -31,8 +31,8 @@ BEGIN
   );
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET stat_done = 1;
 
-  DROP TABLE IF EXISTS ItemStats;
-  CREATE TABLE ItemStats (
+  DROP TEMPORARY TABLE IF EXISTS ItemStats;
+  CREATE TEMPORARY TABLE ItemStats (
     store_id      INT,
     avg_price     REAL,
     std_price     REAL,
@@ -136,6 +136,6 @@ BEGIN
     GROUP BY Stores.store_id
   ) AS ProductProb;
 
-  DROP TABLE IF EXISTS ItemStats;
+  DROP TEMPORARY TABLE IF EXISTS ItemStats;
 END //
 DELIMITER ;

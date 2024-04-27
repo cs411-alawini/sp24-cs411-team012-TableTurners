@@ -42,8 +42,7 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
         [email, hashedPassword, first_name, last_name],
       );
     } catch (error) {
-      console.log(error);
-      logger.error('An error occurred when submitting the record');
+      logger.warn('An error occurred when submitting the record', error);
       res.status(500).send();
       return;
     }

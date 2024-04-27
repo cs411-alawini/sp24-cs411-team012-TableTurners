@@ -19,6 +19,7 @@ import post_search from './post_search.js';
 import post_search_budget from './post_search_budget.js';
 import post_signup from './post_signup.js';
 import post_set_save_hist from './post_set_save_hist.js';
+import post_search_stats from './post_search_stats.js';
 
 const SESSION_LENGTH = 60 * 60 * 1000;
 
@@ -106,9 +107,10 @@ export default function createAPIRouter(logger: Logger, db_connection: DB, redis
   api_router.get('/foodgroups', _auth_endpoint, get_foodgroups(logger, db_connection));
 
   api_router.post('/del_account', _auth_endpoint, post_del_account(logger, db_connection));
+  api_router.post('/search_budget', _auth_endpoint, post_search_budget(logger, db_connection));
+  api_router.post('/search_stats', _auth_endpoint, post_search_stats(logger, db_connection));
   api_router.post('/search', _auth_endpoint, post_search(logger, db_connection));
   api_router.post('/set_save_hist', _auth_endpoint, post_set_save_hist(logger, db_connection));
-  api_router.post('/search_budget', _auth_endpoint, post_search_budget(logger, db_connection));
 
   return api_router;
 }
