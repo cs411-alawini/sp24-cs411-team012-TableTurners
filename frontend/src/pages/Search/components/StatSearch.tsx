@@ -114,7 +114,7 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
           disabled={loading}
           value={searchString}
           onChange={(e) => setSearchString(e.target.value)}
-          style={{ flexGrow: 1, margin: '0 0.5rem' }}
+          style={{ flexGrow: 1, margin: '0 0.5rem 0 0' }}
         />
         <Button icon={PrimeIcons.SEARCH} loading={loading} onClick={search}>
           Search
