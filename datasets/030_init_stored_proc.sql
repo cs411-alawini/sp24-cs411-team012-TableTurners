@@ -3,15 +3,17 @@
 --    These scripts are numbered so that they are run in order by the mysql docker container
 
 USE `Grocery-Aid-Database`;
-
+DROP PROCEDURE GetItemStats;
 -- Get average price and count of a given product search as well as the overall statistics for each store
 -- for user to compare product price against rest of store
 DELIMITER //
 CREATE PROCEDURE GetItemStats (
+  IN uid INT,
   IN search VARCHAR(256)
 )
 BEGIN
   DECLARE stat_done INT DEFAULT 0;
+  DECLARE save_hist BOOL;
   DECLARE curr_sid INT;
   DECLARE curr_avg REAL;
   DECLARE curr_std REAL;
@@ -34,6 +36,7 @@ BEGIN
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET stat_done = 1;
 
   -- Temporary table to store result
+  DROP TEMPORARY TABLE IF EXISTS ItemStats;
   CREATE TEMPORARY TABLE ItemStats (
     store_id      INT,
     avg_price     REAL,
@@ -93,7 +96,7 @@ BEGIN
     DEALLOCATE PREPARE stmt;  
     -- Do all the inner buckets
     REPEAT
-      SELECT COUNT(*)  INTO curr_cnt FROM Products
+      SELECT COUNT(*) INTO curr_cnt FROM Products
       WHERE price > curr_avg + bucket_start * curr_std AND price <= curr_avg + bucket_end * curr_std AND store_id = curr_sid;
       --
       SET @sql = CONCAT('UPDATE ItemStats SET `(', bucket_start, ')-(', bucket_end, ')` = ', curr_cnt ,' WHERE store_id = ', curr_sid, ';');
@@ -123,6 +126,12 @@ BEGIN
   UNTIL stat_done
   END REPEAT;
 
+  SELECT save_history INTO save_hist FROM Accounts WHERE user_id = uid;
+  IF save_hist = 1 THEN
+    INSERT INTO SearchHistory(user_id, search_string) VALUES(uid, search);
+  END IF;
+
+
   -- This forms the results by joining the temporary table with the product statistics (average price and count of that product per store)
   SELECT *
   FROM ItemStats NATURAL JOIN (
@@ -141,3 +150,5 @@ BEGIN
   DROP TEMPORARY TABLE IF EXISTS ItemStats;
 END //
 DELIMITER ;
+
+CALL GetItemStats(3541, 'milk');
