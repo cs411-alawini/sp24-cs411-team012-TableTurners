@@ -20,6 +20,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFail] = useState(false);
   const [profile, setProfile] = useState<ProfileInfo | undefined>();
 
   // Load user profile on each location change
@@ -34,7 +35,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
       .get_profile()
       .then((profile) => {
         setProfile(profile);
-
+        setLoadFail(false);
         if (!profile && needs_auth.includes(location.pathname)) {
           toast.current?.show({ severity: 'error', summary: 'You need to login to view that page' });
           return navigate('/login');
@@ -48,6 +49,8 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
       .catch((error) => {
         // notify user of error
         setProfile(undefined);
+        setLoadFail(true);
+
         console.error(error);
         if (needs_auth.includes(location.pathname)) {
           toast.current?.show({
@@ -64,7 +67,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
 
   const Container = (PageComponent: JSX.Element, show_load: boolean) => {
     let content = loading && show_load ? <></> : <div id="content-container">{PageComponent}</div>;
-    if (profile === undefined && show_load) {
+    if (loadFailed && show_load) {
       content = (
         <div id="content-container">
           <p>Failed to load profile. Try again later.</p>
