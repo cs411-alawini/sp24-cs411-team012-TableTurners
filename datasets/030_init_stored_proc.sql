@@ -3,7 +3,7 @@
 --    These scripts are numbered so that they are run in order by the mysql docker container
 
 USE `Grocery-Aid-Database`;
-DROP PROCEDURE GetItemStats;
+
 -- Get average price and count of a given product search as well as the overall statistics for each store
 -- for user to compare product price against rest of store
 DELIMITER //
@@ -132,7 +132,6 @@ BEGIN
     INSERT INTO SearchHistory(user_id, search_string) VALUES(uid, search);
   END IF;
 
-
   -- This forms the results by joining the temporary table with the product statistics (average price and count of that product per store)
   SELECT *
   FROM ItemStats NATURAL JOIN (
@@ -151,5 +150,3 @@ BEGIN
   DROP TEMPORARY TABLE IF EXISTS ItemStats;
 END //
 DELIMITER ;
-
-CALL GetItemStats(3541, 'milk');
