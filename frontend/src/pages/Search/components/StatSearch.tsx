@@ -1,16 +1,66 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
+import { Chart } from 'primereact/chart';
+import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { PrimeIcons } from 'primereact/api';
 
 import { SearchMetadata } from '../Search';
 import api from '../../../api/api';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { StatResults } from '../../../api/post_search_stats';
-import { Chart } from 'primereact/chart';
-import { Card } from 'primereact/card';
+import { StatResult, StatResults } from '../../../api/post_search_stats';
+import formatPrice from '../../../utils/format_price';
 
 import './statsearch.css';
+
+function StatDisplay({ result }: { result: StatResult }) {
+  return (
+    <Card title={result.store_name} style={{ margin: '1rem' }}>
+      <table>
+        <h3 style={{ marginTop: 0 }}>Store Statistics:</h3>
+        <tr>
+          <th className="stat-label">Min Price:</th>
+          <th className="stat-value">{formatPrice(result.min_price)}</th>
+        </tr>
+        <tr>
+          <th className="stat-label">Max Price:</th>
+          <th className="stat-value">{formatPrice(result.max_price)}</th>
+        </tr>
+        <tr>
+          <th className="stat-label">Average Price:</th>
+          <th className="stat-value">{formatPrice(result.avg_price)}</th>
+        </tr>
+        <tr>
+          <th className="stat-label">Price Standard Deviation:</th>
+          <th className="stat-value">{Math.round(result.std_price * 10000) / 10000}</th>
+        </tr>
+        <tr>
+          <th className="stat-label">Total Items:</th>
+          <th className="stat-value">{result.total_count}</th>
+        </tr>
+      </table>
+      <h3>Product Statistics:</h3>
+      <table>
+        <tr>
+          <th className="stat-label">Num Matching Products:</th>
+          <th className="stat-value">{result.prod_count}</th>
+        </tr>
+        <tr>
+          <th className="stat-label">Product Average Price:</th>
+          <th className="stat-value">{formatPrice(result.prod_avg_price)}</th>
+        </tr>
+      </table>
+      <h3>Price Distribution:</h3>
+      <Chart
+        type="bar"
+        data={{
+          labels: result.bucket_labels.map((bucket) => `${formatPrice(bucket.start)} - ${formatPrice(bucket.end)}`),
+          datasets: [{ label: result.store_name, data: result.buckets }],
+        }}
+      />
+    </Card>
+  );
+}
 
 export default function StatSearch({ stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
   if (!stores || !foodgroups) {
@@ -26,6 +76,7 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [searchString, setSearchString] = useState('');
   const [searchResults, setSearchResults] = useState<StatResults | undefined>();
 
@@ -40,7 +91,7 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
 
     setSearchResults(undefined);
     setLoading(true);
-
+    setShowResults(false);
     api
       .post_search_stats(searchString)
       .then((results) => {
@@ -57,6 +108,7 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
       })
       .finally(() => {
         setLoading(false);
+        setShowResults(true);
       });
   }
 
@@ -67,54 +119,9 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
     } else {
       chart = (
         <>
-          {searchResults.map((result) => {
-            return (
-              <Card key={result.store_id} title={result.store_name} style={{ margin: '0.5rem' }}>
-                <table>
-                  <h3 style={{ marginTop: 0 }}>Store Statistics:</h3>
-                  <tr>
-                    <th className="stat-label">Min Price:</th>
-                    <th className="stat-value">${result.min_price}</th>
-                  </tr>
-                  <tr>
-                    <th className="stat-label">Max Price:</th>
-                    <th className="stat-value">${result.max_price}</th>
-                  </tr>
-                  <tr>
-                    <th className="stat-label">Average Price:</th>
-                    <th className="stat-value">${result.avg_price}</th>
-                  </tr>
-                  <tr>
-                    <th className="stat-label">Price Standard Deviation:</th>
-                    <th className="stat-value">{Math.round(result.std_price * 10000) / 10000}</th>
-                  </tr>
-                  <tr>
-                    <th className="stat-label">Total Items:</th>
-                    <th className="stat-value">{result.total_count}</th>
-                  </tr>
-                </table>
-                <h3>Product Statistics:</h3>
-                <table>
-                  <tr>
-                    <th className="stat-label">Num Matching Products:</th>
-                    <th className="stat-value">{result.prod_count}</th>
-                  </tr>
-                  <tr>
-                    <th className="stat-label">Product Average Price:</th>
-                    <th className="stat-value">${result.prod_avg_price}</th>
-                  </tr>
-                </table>
-                <h3>Price Distribution:</h3>
-                <Chart
-                  type="bar"
-                  data={{
-                    labels: result.bucket_labels,
-                    datasets: [{ label: result.store_name, data: result.buckets }],
-                  }}
-                />
-              </Card>
-            );
-          })}
+          {searchResults.map((result) => (
+            <StatDisplay key={result.store_id} result={result} />
+          ))}
         </>
       );
     }
@@ -126,14 +133,18 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
         <InputText
           disabled={loading}
           value={searchString}
-          onChange={(e) => setSearchString(e.target.value)}
+          onChange={(e) => {
+            setShowResults(false);
+            setSearchString(e.target.value);
+          }}
           style={{ flexGrow: 1, margin: '0 0.5rem 0 0' }}
         />
         <Button
           icon={PrimeIcons.SEARCH}
           loading={loading}
           onClick={(e) => {
-            search(), e.preventDefault();
+            search();
+            e.preventDefault();
           }}
         >
           Search
@@ -145,7 +156,7 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
             <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
           </div>
         </div>
-        {chart}
+        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{chart}</div>
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-type StatResult = {
+export type StatResult = {
   store_id: number;
   store_name: string;
   avg_price: number;
@@ -10,7 +10,7 @@ type StatResult = {
   total_count: number;
   prod_avg_price: number;
   prod_count: number;
-  bucket_labels: Array<number>;
+  bucket_labels: Array<{ start: number; end: number }>;
   buckets: Array<number>;
 };
 export type StatResults = Array<StatResult>;
