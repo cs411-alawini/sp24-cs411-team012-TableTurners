@@ -1,16 +1,18 @@
-import { useEffect, RefObject, useState } from 'react';
+import { useEffect, RefObject, useState, lazy, Suspense } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 
-import Login from './pages/Login/Login.tsx';
-import NotFound from './pages/NotFound/NotFound.tsx';
-import Profile from './pages/Profile/Profile.tsx';
-import Search from './pages/Search/Search.tsx';
-import Signup from './pages/Signup/Signup.tsx';
+const Login = lazy(() => import('./pages/Login/Login.tsx'));
+const NotFound = lazy(() => import('./pages/NotFound/NotFound.tsx'));
+const Profile = lazy(() => import('./pages/Profile/Profile.tsx'));
+const Search = lazy(() => import('./pages/Search/Search.tsx'));
+const Signup = lazy(() => import('./pages/Signup/Signup.tsx'));
 import { ProfileInfo } from './api/get_profile.ts';
 
 import api from './api/api.ts';
 import Navbar from './components/Navbar/Navbar.tsx';
+import { Button } from 'primereact/button';
+import { PrimeIcons } from 'primereact/api';
 
 export type PageProps = { toast: RefObject<Toast>; profile?: ProfileInfo };
 
@@ -23,7 +25,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
   // Load user profile on each location change
   // Redirect from pages that need authenticate to /login if session is invalid
   // Redirects from /login and /signup to /profile if session is valid
-  useEffect(() => {
+  function loadProfile() {
     setLoading(profile === undefined);
     const needs_auth = ['/profile', '/search'];
     const redirect_profile = ['/login', '/signup'];
@@ -45,6 +47,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
       })
       .catch((error) => {
         // notify user of error
+        setProfile(undefined);
         console.error(error);
         if (needs_auth.includes(location.pathname)) {
           toast.current?.show({
@@ -55,25 +58,46 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
         }
       })
       .finally(() => setLoading(false));
-  }, [location.pathname]);
+  }
+
+  useEffect(loadProfile, [location.pathname]);
 
   const Container = (PageComponent: JSX.Element, show_load: boolean) => {
-    const content = loading && show_load ? <></> : <div id="content-container">{PageComponent}</div>;
-    let load_screen = <></>;
-    if (show_load) {
-      load_screen = (
-        <div id="profile-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
-          <div>
-            <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
-          </div>
+    let content = loading && show_load ? <></> : <div id="content-container">{PageComponent}</div>;
+    if (profile === undefined && show_load) {
+      content = (
+        <div id="content-container">
+          <p>Failed to load profile. Try again later.</p>
+          <Button icon={PrimeIcons.REPLAY} loading={loading} onClick={loadProfile}>
+            Retry
+          </Button>
         </div>
       );
     }
+    const load_screen = (
+      <div id="profile-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
+        <div>
+          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
+        </div>
+      </div>
+    );
+
     return (
       <>
         <Navbar toast={toast} profile={profile} loadingProfile={loading} updateProfile={setProfile} />
-        {content}
-        {load_screen}
+        <Suspense
+          fallback={
+            <div id="profile-loading" style={{ opacity: 0.5, pointerEvents: loading ? 'all' : 'none' }}>
+              <div>
+                <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
+              </div>
+            </div>
+          }
+        >
+          {content}
+          {/* Show loading spinner on designated pages (i.e., profile, search) */}
+          {show_load ? load_screen : <></>}
+        </Suspense>
       </>
     );
   };
