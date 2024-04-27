@@ -16,39 +16,43 @@ import './statsearch.css';
 function StatDisplay({ result }: { result: StatResult }) {
   return (
     <Card title={result.store_name} style={{ margin: '1rem' }}>
+      <h3 style={{ marginTop: 0 }}>Store Statistics:</h3>
       <table>
-        <h3 style={{ marginTop: 0 }}>Store Statistics:</h3>
-        <tr>
-          <th className="stat-label">Min Price:</th>
-          <th className="stat-value">{formatPrice(result.min_price)}</th>
-        </tr>
-        <tr>
-          <th className="stat-label">Max Price:</th>
-          <th className="stat-value">{formatPrice(result.max_price)}</th>
-        </tr>
-        <tr>
-          <th className="stat-label">Average Price:</th>
-          <th className="stat-value">{formatPrice(result.avg_price)}</th>
-        </tr>
-        <tr>
-          <th className="stat-label">Price Standard Deviation:</th>
-          <th className="stat-value">{Math.round(result.std_price * 10000) / 10000}</th>
-        </tr>
-        <tr>
-          <th className="stat-label">Total Items:</th>
-          <th className="stat-value">{result.total_count}</th>
-        </tr>
+        <tbody>
+          <tr>
+            <th className="stat-label">Min Price:</th>
+            <th className="stat-value">{formatPrice(result.min_price)}</th>
+          </tr>
+          <tr>
+            <th className="stat-label">Max Price:</th>
+            <th className="stat-value">{formatPrice(result.max_price)}</th>
+          </tr>
+          <tr>
+            <th className="stat-label">Average Price:</th>
+            <th className="stat-value">{formatPrice(result.avg_price)}</th>
+          </tr>
+          <tr>
+            <th className="stat-label">Price Standard Deviation:</th>
+            <th className="stat-value">{Math.round(result.std_price * 10000) / 10000}</th>
+          </tr>
+          <tr>
+            <th className="stat-label">Total Items:</th>
+            <th className="stat-value">{result.total_count}</th>
+          </tr>
+        </tbody>
       </table>
       <h3>Product Statistics:</h3>
       <table>
-        <tr>
-          <th className="stat-label">Num Matching Products:</th>
-          <th className="stat-value">{result.prod_count}</th>
-        </tr>
-        <tr>
-          <th className="stat-label">Product Average Price:</th>
-          <th className="stat-value">{formatPrice(result.prod_avg_price)}</th>
-        </tr>
+        <tbody>
+          <tr>
+            <th className="stat-label">Num Matching Products:</th>
+            <th className="stat-value">{result.prod_count}</th>
+          </tr>
+          <tr>
+            <th className="stat-label">Product Average Price:</th>
+            <th className="stat-value">{formatPrice(result.prod_avg_price)}</th>
+          </tr>
+        </tbody>
       </table>
       <h3>Price Distribution:</h3>
       <Chart

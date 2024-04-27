@@ -59,7 +59,7 @@ h3 {
 }
 
 
-@media (max-width: 49rem) {
+@media (max-width: 50rem) {
   #content-container {
     margin: 0 2rem;
   }
