@@ -126,6 +126,7 @@ BEGIN
   UNTIL stat_done
   END REPEAT;
 
+  -- Update user's search history if they have search history enabled
   SELECT save_history INTO save_hist FROM Accounts WHERE user_id = uid;
   IF save_hist = 1 THEN
     INSERT INTO SearchHistory(user_id, search_string) VALUES(uid, search);
