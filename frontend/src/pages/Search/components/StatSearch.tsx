@@ -53,58 +53,62 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
 
   let chart = <></>;
   if (searchResults) {
-    chart = (
-      <>
-        {searchResults.map((result) => {
-          return (
-            <Card key={result.store_id} title={result.store_name} style={{ margin: '0.5rem' }}>
-              <table>
-                <h3 style={{ marginTop: 0 }}>Store Statistics:</h3>
-                <tr>
-                  <th className="stat-label">Min Price:</th>
-                  <th className="stat-value">${result.min_price}</th>
-                </tr>
-                <tr>
-                  <th className="stat-label">Max Price:</th>
-                  <th className="stat-value">${result.max_price}</th>
-                </tr>
-                <tr>
-                  <th className="stat-label">Average Price:</th>
-                  <th className="stat-value">${result.avg_price}</th>
-                </tr>
-                <tr>
-                  <th className="stat-label">Price Standard Deviation:</th>
-                  <th className="stat-value">{Math.round(result.std_price * 10000) / 10000}</th>
-                </tr>
-                <tr>
-                  <th className="stat-label">Total Items:</th>
-                  <th className="stat-value">{result.total_count}</th>
-                </tr>
-              </table>
-              <h3>Product Statistics:</h3>
-              <table>
-                <tr>
-                  <th className="stat-label">Num Matching Products:</th>
-                  <th className="stat-value">{result.prod_count}</th>
-                </tr>
-                <tr>
-                  <th className="stat-label">Product Average Price:</th>
-                  <th className="stat-value">${result.prod_avg_price}</th>
-                </tr>
-              </table>
-              <h3>Price Distribution:</h3>
-              <Chart
-                type="bar"
-                data={{
-                  labels: result.bucket_labels,
-                  datasets: [{ label: result.store_name, data: result.buckets }],
-                }}
-              />
-            </Card>
-          );
-        })}
-      </>
-    );
+    if (searchResults.length === 0) {
+      chart = <p>No Results Found</p>;
+    } else {
+      chart = (
+        <>
+          {searchResults.map((result) => {
+            return (
+              <Card key={result.store_id} title={result.store_name} style={{ margin: '0.5rem' }}>
+                <table>
+                  <h3 style={{ marginTop: 0 }}>Store Statistics:</h3>
+                  <tr>
+                    <th className="stat-label">Min Price:</th>
+                    <th className="stat-value">${result.min_price}</th>
+                  </tr>
+                  <tr>
+                    <th className="stat-label">Max Price:</th>
+                    <th className="stat-value">${result.max_price}</th>
+                  </tr>
+                  <tr>
+                    <th className="stat-label">Average Price:</th>
+                    <th className="stat-value">${result.avg_price}</th>
+                  </tr>
+                  <tr>
+                    <th className="stat-label">Price Standard Deviation:</th>
+                    <th className="stat-value">{Math.round(result.std_price * 10000) / 10000}</th>
+                  </tr>
+                  <tr>
+                    <th className="stat-label">Total Items:</th>
+                    <th className="stat-value">{result.total_count}</th>
+                  </tr>
+                </table>
+                <h3>Product Statistics:</h3>
+                <table>
+                  <tr>
+                    <th className="stat-label">Num Matching Products:</th>
+                    <th className="stat-value">{result.prod_count}</th>
+                  </tr>
+                  <tr>
+                    <th className="stat-label">Product Average Price:</th>
+                    <th className="stat-value">${result.prod_avg_price}</th>
+                  </tr>
+                </table>
+                <h3>Price Distribution:</h3>
+                <Chart
+                  type="bar"
+                  data={{
+                    labels: result.bucket_labels,
+                    datasets: [{ label: result.store_name, data: result.buckets }],
+                  }}
+                />
+              </Card>
+            );
+          })}
+        </>
+      );
+    }
   }
 
   return (
