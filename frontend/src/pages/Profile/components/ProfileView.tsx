@@ -23,7 +23,7 @@ export default function ProfileView({ toast, profile }: PageProps) {
         if (success) {
           toast.current?.show({ severity: 'success', summary: 'Save History Updated' });
         } else {
-          toast.current?.show({ severity: 'error', summary: 'Failed to toggle save history' });
+          toast.current?.show({ severity: 'error', summary: 'Failed to toggle save history', detail: 'Are you logged in?' });
         }
       })
       .catch((error) => {
