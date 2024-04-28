@@ -42,7 +42,7 @@
     "express": "^4.19.1",
     "express-session": "^1.18.0",
     "fs-extra": "^11.2.0",
-    "mysql2": "^3.9.3",
+    "mysql2": "^3.9.7",
     "redis": "^4.6.13",
     "winston": "^3.13.0",
     "winston-daily-rotate-file": "^5.0.0"
