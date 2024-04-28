@@ -5,7 +5,7 @@ export type History = Array<{ history_id: number; search_string: string; timesta
 /**
  * get_history()
  * GET /api/history endpoint
- * @returns idk something
+ * @returns list of user history if successfully fetched, undefined if unauthorized
  */
 export default async function get_history(): Promise<History | undefined> {
   try {

@@ -5,7 +5,7 @@ export type StoreList = Array<string>;
 /**
  * get_stores()
  * GET /api/stores endpoint
- * @returns idk something
+ * @returns list of stores if successfully fetched, undefined if unauthorized
  */
 export default async function get_stores(): Promise<StoreList | undefined> {
   try {

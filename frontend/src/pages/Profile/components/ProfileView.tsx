@@ -13,17 +13,19 @@ export default function ProfileView({ toast, profile }: PageProps) {
   if (!profile) return <></>;
   const navigate = useNavigate();
   const [checked, setChecked] = useState(profile.save_history);
-  const [loading, setLoading] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
+  const [delLoading, setDelLoading] = useState(false);
 
-  function handleSaveHistoryChange() {
-    setLoading(true);
+  function handleSaveHistoryChange(target: boolean) {
+    setToggleLoading(true);
     api
-      .post_set_save_hist()
+      .post_set_save_hist(target)
       .then((success) => {
         if (success) {
           toast.current?.show({ severity: 'success', summary: 'Save History Updated' });
         } else {
           toast.current?.show({ severity: 'error', summary: 'Failed to toggle save history', detail: 'Are you logged in?' });
+          setChecked(!target);
         }
       })
       .catch((error) => {
@@ -33,12 +35,13 @@ export default function ProfileView({ toast, profile }: PageProps) {
           summary: 'Failed to update Save History',
           detail: `${error.message}. Try again later`,
         });
+        setChecked(!target);
       })
-      .finally(() => setLoading(false));
+      .finally(() => setToggleLoading(false));
   }
 
   function delete_account() {
-    setLoading(true);
+    setDelLoading(true);
     api
       .post_del_account()
       .then((success) => {
@@ -57,7 +60,7 @@ export default function ProfileView({ toast, profile }: PageProps) {
           detail: `${error.message}. Try again later`,
         });
       })
-      .finally(() => setLoading(false));
+      .finally(() => setDelLoading(false));
   }
 
   return (
@@ -74,13 +77,14 @@ export default function ProfileView({ toast, profile }: PageProps) {
       <Divider />
       <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
         <p style={{ marginRight: '0.5rem' }}>
-          <b>Save History </b>
+          <b>Save History: </b>
         </p>
         <InputSwitch
+          disabled={toggleLoading}
           checked={checked}
           onChange={(e) => {
             setChecked(e.value);
-            handleSaveHistoryChange();
+            handleSaveHistoryChange(e.value);
           }}
         />
       </div>
@@ -96,7 +100,7 @@ export default function ProfileView({ toast, profile }: PageProps) {
               accept: delete_account,
             });
           }}
-          loading={loading}
+          loading={delLoading}
         >
           Delete Account
         </Button>

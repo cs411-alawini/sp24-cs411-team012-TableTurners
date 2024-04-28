@@ -5,7 +5,7 @@ export type FoodGroups = Array<string>;
 /**
  * get_foodgroups()
  * GET /api/foodgroups endpoint
- * @returns idk something
+ * @returns list of food groups if successfully fetched, undefined if unauthorized
  */
 export default async function get_foodgroups(): Promise<FoodGroups | undefined> {
   try {

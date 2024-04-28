@@ -21,8 +21,19 @@ export default function post_set_save_hist(logger: Logger, db_connection: DB): R
       return;
     }
 
+    const { save_history } = req.body;
+    // Missing fields, bad request
+    if (save_history === undefined) {
+      logger.debug('Invalid request, missing search string');
+      res.status(400).send();
+      return;
+    }
+
     try {
-      await db_connection.execute('UPDATE Accounts SET save_history = NOT save_history WHERE user_id = ?;', [user_id]);
+      await db_connection.execute('UPDATE Accounts SET save_history = ? WHERE user_id = ?;', [
+        save_history ? 1 : 0,
+        user_id,
+      ]);
     } catch (error) {
       logger.error('Failed to fetch password hash.', error);
       res.status(500).send();

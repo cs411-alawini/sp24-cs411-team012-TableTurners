@@ -19,7 +19,7 @@ export type StatResults = Array<StatResult>;
  * post_search_stats()
  * POST /api/search_stats endpoint handler
  * @param search user's search string
- * @returns idk do something
+ * @returns search results if successful, undefined otherwise
  */
 export default async function post_search_stats(search: string): Promise<StatResults | undefined> {
   try {
@@ -28,6 +28,7 @@ export default async function post_search_stats(search: string): Promise<StatRes
       url: '/api/search_stats',
       timeout: 60000,
       data: { search },
+      withCredentials: true,
     });
     return res.data;
   } catch (error) {
