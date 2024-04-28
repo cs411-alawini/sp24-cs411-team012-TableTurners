@@ -23,7 +23,7 @@ export default function ProfileView({ toast, profile }: PageProps) {
         if (success) {
           toast.current?.show({ severity: 'success', summary: 'Save History Updated' });
         } else {
-          toast.current?.show({ severity: 'success', summary: 'Failed to toggle save history' });
+          toast.current?.show({ severity: 'error', summary: 'Failed to toggle save history' });
         }
       })
       .catch((error) => {
@@ -46,7 +46,7 @@ export default function ProfileView({ toast, profile }: PageProps) {
           toast.current?.show({ severity: 'success', summary: 'Account Deleted' });
           navigate('/signup');
         } else {
-          toast.current?.show({ severity: 'success', summary: 'Failed to delete account', detail: 'Are you logged in?' });
+          toast.current?.show({ severity: 'error', summary: 'Failed to delete account', detail: 'Are you logged in?' });
         }
       })
       .catch((error) => {
