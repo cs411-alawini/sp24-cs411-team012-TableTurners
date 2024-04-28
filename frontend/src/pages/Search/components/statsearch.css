@@ -3,6 +3,7 @@
 }
 
 .stat-value {
+  padding-left: 3rem;
   text-align: left;
   font-weight: 400;
 }
