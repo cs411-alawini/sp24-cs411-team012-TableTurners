@@ -9,14 +9,15 @@ import './search.css';
 import { useNavigate } from 'react-router-dom';
 import { StoreList } from '../../api/get_stores';
 import { FoodGroups } from '../../api/get_foodgroups';
+import StatSearch from './components/StatSearch';
 
-export type SearchMetadata = { stores?: StoreList; foodgroups?: FoodGroups; refetchMeta: () => void };
+export type SearchMetadata = { page_props: PageProps; stores?: StoreList; foodgroups?: FoodGroups; refetchMeta: () => void };
 
 function Search({ toast, profile }: PageProps) {
   if (!profile) return <></>;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [metadata, setMetadata] = useState<SearchMetadata>({ refetchMeta: fetchMeta });
+  const [metadata, setMetadata] = useState<SearchMetadata>({ page_props: { toast, profile }, refetchMeta: fetchMeta });
 
   function fetchMeta() {
     setLoading(true);
@@ -34,7 +35,7 @@ function Search({ toast, profile }: PageProps) {
 
     Promise.all([store_promise, food_promise])
       .catch((error) => {
-        setMetadata({ refetchMeta: fetchMeta });
+        setMetadata({ page_props: { toast, profile }, refetchMeta: fetchMeta });
         console.error(error);
         toast.current?.show({
           severity: 'error',
@@ -64,6 +65,7 @@ function Search({ toast, profile }: PageProps) {
         <TabView>
           <TabPanel header="Keyword Search">{loading ? <></> : <KeywordSearch {...metadata} />}</TabPanel>
           <TabPanel header="Search with Budget">{loading ? <></> : <BudgetSearch {...metadata} />}</TabPanel>
+          <TabPanel header="Product Statistics">{loading ? <></> : <StatSearch {...metadata} />}</TabPanel>
         </TabView>
         {search_loading}
       </div>

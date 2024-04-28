@@ -7,6 +7,7 @@ import get_stores from './get_stores';
 import post_del_account from './port_del_account';
 import post_search from './post_search';
 import post_search_budget from './post_search_budget';
+import post_search_stats from './post_search_stats';
 import post_set_save_hist from './post_set_save_hist';
 import post_signup from './post_signup';
 
@@ -21,6 +22,7 @@ export default Object.freeze({
   post_login,
   post_search,
   post_search_budget,
+  post_search_stats,
   post_set_save_hist,
   post_signup,
 });
