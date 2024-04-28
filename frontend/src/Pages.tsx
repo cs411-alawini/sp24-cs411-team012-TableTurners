@@ -29,7 +29,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
   function loadProfile() {
     setLoading(profile === undefined);
     const needs_auth = ['/profile', '/search'];
-    const redirect_profile = ['/login', '/signup'];
+    const redirect_profile = ['/', '/login', '/signup'];
 
     api
       .get_profile()
