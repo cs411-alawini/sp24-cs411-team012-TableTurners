@@ -31,7 +31,7 @@ export default function post_login(logger: Logger, db_connection: DB): RequestHa
 
     let response;
     try {
-      [response] = await db_connection.execute('SELECT user_id, password_hash FROM Accounts WHERE email_addr = ?;', [email]);
+      [response] = await db_connection.execute('SELECT user_id, password_hash FROM Accounts WHERE email_addr LIKE ?;', [email]);
     } catch (error) {
       logger.error('Failed to fetch password hash.', error);
       res.status(500).send();
