@@ -45,7 +45,7 @@ function Signup({ toast }: PageProps) {
   function submit() {
     /* Set button as loading and hide messages */
     setLoading(true);
-    setShowErrorMsg(false);
+
     /* Call API method to submit request and evaluate returned status */
     api
       .post_signup(email, password, firstName, lastName)

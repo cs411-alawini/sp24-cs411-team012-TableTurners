@@ -33,7 +33,7 @@ function Login({ toast }: PageProps) {
   /* Submits email and password to API for authentication */
   function submit() {
     setLoading(true); // Set the loading button accordingly
-    setShowErrorMsg(false); // Remove error message if present
+
     api
       .post_login(inputEmail, inputPassword) // Use post_login method to submit a login request
       .then((response_status) => {
