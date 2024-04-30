@@ -34,11 +34,11 @@ export default function post_search(logger: Logger, db_connection: DB): RequestH
     try {
       [response] = await db_connection.execute(
         `
-SELECT Stores.store_name, Products.name, Products.price 
-FROM Stores JOIN Products 
-  ON Stores.store_id = Products.store_id 
-WHERE Products.name LIKE ?
-ORDER BY Stores.store_name ASC, Products.price ASC
+        SELECT Stores.store_name, Products.name, Products.price 
+        FROM Stores JOIN Products 
+          ON Stores.store_id = Products.store_id 
+        WHERE Products.name LIKE ?
+        ORDER BY Stores.store_name ASC, Products.price ASC
   `,
         [`%${search}%`],
       );
