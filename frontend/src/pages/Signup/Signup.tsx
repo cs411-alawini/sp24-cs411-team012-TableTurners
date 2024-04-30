@@ -72,7 +72,11 @@ function Signup({ toast }: PageProps) {
       .catch((error) => {
         // notify user of error
         console.error(error);
-        toast.current?.show({ severity: 'error', summary: 'Failed to log in', detail: `${error.message}. Try again later` });
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed to sign up',
+          detail: `${error.message}. Try again later`,
+        });
       })
       .finally(() => setLoading(false));
   }
