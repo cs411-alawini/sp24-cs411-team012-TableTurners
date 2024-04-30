@@ -16,7 +16,7 @@ function App() {
   return (
     <>
       <PrimeReactProvider value={primereact_config}>
-        <Toast ref={toast} />
+        <Toast ref={toast} position="bottom-right" />
         <ConfirmDialog />
         <BrowserRouter>
           <Pages toast={toast} />
