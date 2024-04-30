@@ -6,7 +6,7 @@ import axios from 'axios';
  * @param something idk something
  * @returns idk do something
  */
-export type budget_results = Array<string>;
+export type budget_results = Array<object>;
 export default async function post_search_budget(search: string, budget: number): Promise<budget_results | undefined> {
   try {
     const res = await axios({

@@ -119,7 +119,7 @@ export default function BudgetSearch({stores, page_props: { toast }, foodgroups,
             <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
           </div>
         </div>
-        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{budget_results}</div>
+        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{results}</div>
       </div>
     </>
   );
