@@ -29,8 +29,6 @@ export default function post_search_budget(logger: Logger, db_connection: DB): R
       return;
     }
 
-    console.log(search, budget);
-
     let response;
     try {
       [response] = await db_connection.execute('CALL BudgetSearch(?, ?);', [budget, search]);
@@ -39,8 +37,6 @@ export default function post_search_budget(logger: Logger, db_connection: DB): R
       res.status(500).send();
       return;
     }
-
-    console.log(response);
 
     try {
       await db_connection.execute('INSERT INTO SearchHistory (user_id, search_string) VALUES(?, ?)', [user_id, search]);
