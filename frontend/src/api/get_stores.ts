@@ -9,7 +9,7 @@ export type StoreList = Array<string>;
  */
 export default async function get_stores(): Promise<StoreList | undefined> {
   try {
-    const res = await axios({ method: 'post', url: '/api/stores', timeout: 2000, withCredentials: true });
+    const res = await axios({ method: 'get', url: '/api/stores', timeout: 2000, withCredentials: true });
     return res.data;
   } catch (error) {
     // Ignore if unauthorized (401), unknown error otherwise

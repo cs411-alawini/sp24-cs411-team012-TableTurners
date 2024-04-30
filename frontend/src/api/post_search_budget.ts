@@ -11,7 +11,7 @@ export default async function post_search_budget(search: string, budget: number)
   try {
     const res = await axios({
       method: 'post',
-      url: '/api/post_search_budget',
+      url: '/api/search_budget',
       timeout: 1000000,
       data: { search, budget },
       withCredentials: true,
@@ -23,4 +23,3 @@ export default async function post_search_budget(search: string, budget: number)
     throw error;
   }
 }
-

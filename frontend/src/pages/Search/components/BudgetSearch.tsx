@@ -1,5 +1,4 @@
 import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { PrimeIcons } from 'primereact/api';
 
@@ -10,8 +9,9 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import api from '../../../api/api';
 import { budget_results } from '../../../api/post_search_budget';
+import { InputNumber } from 'primereact/inputnumber';
 
-export default function BudgetSearch({stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
+export default function BudgetSearch({ stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
   if (!stores || !foodgroups) {
     return (
       <>
@@ -30,7 +30,7 @@ export default function BudgetSearch({stores, page_props: { toast }, foodgroups,
   const [searchResults, setSearchResults] = useState<budget_results | undefined>();
 
   function search() {
-    if (searchString === '' ) {
+    if (searchString === '') {
       toast.current?.show({
         severity: 'error',
         summary: 'Search string cannot be empty',
@@ -47,7 +47,7 @@ export default function BudgetSearch({stores, page_props: { toast }, foodgroups,
         if (!budget_results) return navigate('/login');
         setSearchResults(budget_results);
       })
-      .catch((error: { message: any; }) => {
+      .catch((error: { message: any }) => {
         console.error(error);
         toast.current?.show({
           severity: 'error',
@@ -86,22 +86,24 @@ export default function BudgetSearch({stores, page_props: { toast }, foodgroups,
         <InputText
           disabled={loading}
           value={searchString}
-          placeholder='Query'
+          placeholder="Comma Separated Query"
           onChange={(e) => {
             setShowResults(false);
             setSearchString(e.target.value);
           }}
+          style={{ flexGrow: 2, margin: '0 0.5rem 0 0' }}
+        />
+        <InputNumber
+          placeholder="Budget"
+          mode="currency"
+          currency="USD"
+          value={searchBudget}
+          onValueChange={(e) => {
+            setShowResults(false);
+            setSearchBudget(e.value ? e.value : 0);
+          }}
           style={{ flexGrow: 1, margin: '0 0.5rem 0 0' }}
         />
-         <InputText placeholder='Budget'
-          onChange={(e) => {
-          setShowResults(false);
-          setSearchBudget(e.target.valueAsNumber);
-        }}
-         />
-         <Dropdown options={stores} />
-      {/* Missing config to be able to update on selection. See PrimeReact docs if you need these dropdown */}
-      <Dropdown options={foodgroups} />
         <Button
           icon={PrimeIcons.SEARCH}
           loading={loading}
@@ -123,6 +125,4 @@ export default function BudgetSearch({stores, page_props: { toast }, foodgroups,
       </div>
     </>
   );
-
-
 }
