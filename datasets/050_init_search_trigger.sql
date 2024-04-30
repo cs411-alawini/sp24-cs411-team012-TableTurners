@@ -21,5 +21,3 @@ BEGIN
 END //
 
 DELIMITER ;
-
--- Trigger to prevent duplicate 

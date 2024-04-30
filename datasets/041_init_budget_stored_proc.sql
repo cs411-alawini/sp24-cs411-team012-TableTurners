@@ -70,35 +70,37 @@ BEGIN
     JOIN Products ON Products.store_id = budget_stores.store_id 
     ORDER BY budget_stores.AvgPrice ASC
     LIMIT 1;
-    
-    -- For each item, find cheapest version
-    SET search_list = searchString;
-    SET start_idx = 1;
-    SET end_list = 0;
-    REPEAT
-      SET end_idx = LOCATE(',', search_list);
 
-      IF end_idx > 0 THEN
-        SET curr_search = SUBSTRING(search_list, start_idx, end_idx - start_idx);
-        SET search_list = SUBSTRING(search_list, end_idx + 1);
-      ELSE
-        SET curr_search = SUBSTRING(search_list, start_idx);
-        SET end_list = 1;
-      END IF;
+    IF store_cheap_id != NULL THEN
+      -- For each item, find cheapest version
+      SET search_list = searchString;
+      SET start_idx = 1;
+      SET end_list = 0;
+      REPEAT
+        SET end_idx = LOCATE(',', search_list);
 
-      SELECT Stores.store_name, Products.name, Products.price 
-      INTO curr_store, curr_prod, curr_price
-      FROM Products JOIN Stores
-        ON Products.store_id = Stores.store_id
-      WHERE 
-        name LIKE CONCAT('%', curr_search, '%')
-        AND price = (SELECT MIN(price) FROM Products WHERE name LIKE CONCAT('%', curr_search, '%'))
-        AND Stores.store_id = store_cheap_id
-      LIMIT 1;
+        IF end_idx > 0 THEN
+          SET curr_search = SUBSTRING(search_list, start_idx, end_idx - start_idx);
+          SET search_list = SUBSTRING(search_list, end_idx + 1);
+        ELSE
+          SET curr_search = SUBSTRING(search_list, start_idx);
+          SET end_list = 1;
+        END IF;
 
-      INSERT INTO BudgetResults VALUES(curr_store, curr_prod, curr_price);
-    UNTIL end_list
-    END REPEAT;
+        SELECT Stores.store_name, Products.name, Products.price 
+        INTO curr_store, curr_prod, curr_price
+        FROM Products JOIN Stores
+          ON Products.store_id = Stores.store_id
+        WHERE 
+          name LIKE CONCAT('%', curr_search, '%')
+          AND price = (SELECT MIN(price) FROM Products WHERE name LIKE CONCAT('%', curr_search, '%'))
+          AND Stores.store_id = store_cheap_id
+        LIMIT 1;
+
+        INSERT INTO BudgetResults VALUES(curr_store, curr_prod, curr_price);
+      UNTIL end_list
+      END REPEAT;
+    END IF;
 
     -- Get final results
     SELECT * FROM BudgetResults;
