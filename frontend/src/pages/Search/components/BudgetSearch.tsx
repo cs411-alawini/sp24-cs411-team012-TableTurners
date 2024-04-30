@@ -10,6 +10,7 @@ import { DataTable } from 'primereact/datatable';
 import api from '../../../api/api';
 import { budget_results } from '../../../api/post_search_budget';
 import { InputNumber } from 'primereact/inputnumber';
+import formatPrice from '../../../utils/format_price';
 
 export default function BudgetSearch({ stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
   if (!stores || !foodgroups) {
@@ -75,7 +76,7 @@ export default function BudgetSearch({ stores, page_props: { toast }, foodgroups
       >
         <Column field="store_name" header="Store" sortable />
         <Column field="name" header="Product Name" sortable />
-        <Column field="price" header="Price" sortable />
+        <Column field="price" header="Price" sortable body={(p) => formatPrice(p.price)} />
       </DataTable>
     );
   }
