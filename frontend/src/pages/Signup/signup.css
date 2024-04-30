@@ -1,0 +1,22 @@
+#signup-card {
+  max-width: 30rem;
+  margin: auto;
+}
+
+#signup-card form {
+  width: 100%;
+}
+
+.signup-input {
+  margin: 1rem;
+  display: flex;
+}
+
+.signup-input span,
+.signup-input input {
+  width: 100%;
+}
+
+#signup-button {
+  margin-left: auto;
+}

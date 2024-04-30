@@ -1,0 +1,22 @@
+#login-card {
+  max-width: 25rem;
+  margin: auto;
+}
+
+#login-card form {
+  width: 100%;
+}
+
+.login-input {
+  margin: 1rem;
+  display: flex;
+}
+
+.login-input span,
+.login-input input {
+  width: 100%;
+}
+
+#login-button {
+  margin-left: auto;
+}
