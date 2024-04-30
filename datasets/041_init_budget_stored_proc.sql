@@ -71,7 +71,7 @@ BEGIN
     ORDER BY budget_stores.AvgPrice ASC
     LIMIT 1;
 
-    IF store_cheap_id != NULL THEN
+    IF store_cheap_id IS NOT NULL THEN
       -- For each item, find cheapest version
       SET search_list = searchString;
       SET start_idx = 1;
