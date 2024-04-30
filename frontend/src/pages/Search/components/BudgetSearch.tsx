@@ -43,7 +43,7 @@ export default function BudgetSearch({stores, page_props: { toast }, foodgroups,
     setShowResults(false);
     api
       .post_search_budget(searchString, searchBudget)
-      .then((budget_results: SetStateAction<results | undefined>) => {
+      .then((budget_results: SetStateAction<budget_results | undefined>) => {
         if (!budget_results) return navigate('/login');
         setSearchResults(budget_results);
       })
