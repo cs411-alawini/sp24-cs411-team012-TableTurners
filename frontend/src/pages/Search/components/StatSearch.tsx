@@ -11,7 +11,7 @@ import api from '../../../api/api';
 import { StatResult, StatResults } from '../../../api/post_search_stats';
 import formatPrice from '../../../utils/format_price';
 
-import './statsearch.css';
+import './search.css';
 
 function StatDisplay({ result }: { result: StatResult }) {
   return (
@@ -106,7 +106,7 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
         console.error(error);
         toast.current?.show({
           severity: 'error',
-          summary: 'Failed to fetch account',
+          summary: 'Failed to run search',
           detail: `${error.message}. Try again later`,
         });
       })
@@ -116,12 +116,12 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
       });
   }
 
-  let chart = <></>;
+  let results = <></>;
   if (searchResults) {
     if (searchResults.length === 0) {
-      chart = <p>No Results Found</p>;
+      results = <p>No Results Found</p>;
     } else {
-      chart = (
+      results = (
         <>
           {searchResults.map((result) => (
             <StatDisplay key={result.store_id} result={result} />
@@ -154,13 +154,13 @@ export default function StatSearch({ stores, page_props: { toast }, foodgroups, 
           Search
         </Button>
       </form>
-      <div id="stat-results">
-        <div id="stat-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
+      <div id="search-results">
+        <div id="search-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
           <div>
             <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
           </div>
         </div>
-        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{chart}</div>
+        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{results}</div>
       </div>
     </>
   );

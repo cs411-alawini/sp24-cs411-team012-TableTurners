@@ -1,25 +1,23 @@
 import axios from 'axios';
 
+export type KeywordSearchResult = {
+  store_name: string;
+  name: string;
+  price: number;
+};
+export type KeywordSearchResults = Array<KeywordSearchResult>;
+
 /**
  * post_search()
  * POST /api/search endpoint handler
  * @param something idk something
  * @returns idk do something
  */
-
-export type keywordSearch = {
-  store_name: string;
-  name: string;
-  pric: number;
-};
-
-
-
-export default async function post_search(search: string): Promise<keywordSearch | undefined> {
+export default async function post_search(search: string): Promise<KeywordSearchResults | undefined> {
   try {
     const res = await axios({
       method: 'post',
-      url: '/api/search/keyword',
+      url: '/api/search',
       timeout: 60000,
       data: { search },
       withCredentials: true,

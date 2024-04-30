@@ -1,6 +1,6 @@
 import { TabPanel, TabView } from 'primereact/tabview';
 import { PageProps } from '../../Pages';
-import KeywordSearch from './components/KeywordSearchDisplay';
+import KeywordSearch from './components/KeywordSearch';
 import BudgetSearch from './components/BudgetSearch';
 import { useEffect, useState } from 'react';
 import api from '../../api/api';

@@ -5,14 +5,13 @@ import { PrimeIcons } from 'primereact/api';
 
 import { SearchMetadata } from '../Search';
 import api from '../../../api/api';
-import { keywordSearch } from '../../../api/post_search';
+import { KeywordSearchResults } from '../../../api/post_search';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 
-
-
+import './search.css';
 
 export default function KeywordSearchDisplay({ stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
   if (!stores || !foodgroups) {
@@ -30,76 +29,61 @@ export default function KeywordSearchDisplay({ stores, page_props: { toast }, fo
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [searchString, setSearchString] = useState('');
-  const [searchResults, setSearchResults] = useState<keywordSearch | undefined>();
+  const [searchResults, setSearchResults] = useState<KeywordSearchResults | undefined>();
 
-  function loadKeywordSearchResult() {
+  function search() {
+    if (searchString === '') {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Search string cannot be empty',
+      });
+      return;
+    }
+
     setSearchResults(undefined);
     setLoading(true);
     setShowResults(false);
     api
       .post_search(searchString)
-      .then((h) => {
-        if (!h) return navigate('/login');
-        setSearchResults(h);
+      .then((results) => {
+        if (!results) return navigate('/login');
+        setSearchResults(results);
       })
       .catch((error) => {
-        // notify user of error
-        setSearchResults(undefined);
         console.error(error);
-        toast.current?.show({ severity: 'error', summary: error.message, detail: 'Try again later' });
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Failed to run search',
+          detail: `${error.message}. Try again later`,
+        });
       })
       .finally(() => {
         setLoading(false);
-        setSearchResults(searchResults);
         setShowResults(true);
       });
-       
   }
-  // useEffect(KeywordSearchDisplay, [stores, p]);
 
-  let message = <div style={{ minHeight: '20rem' }}>No result</div>;
-  if (!loading && searchResults === undefined) {
-    message = (
-      <div style={{ minHeight: '20rem' }}>
-        <p>Failed to fetch results.. Try again later.</p>
-        <Button onClick={loadKeywordSearchResult} icon={PrimeIcons.REFRESH}>
-          Retry
-        </Button>
-      </div>
+  let results = <></>;
+  if (searchResults) {
+    results = (
+      <DataTable
+        value={searchResults}
+        loading={loading}
+        emptyMessage={<p>No Results Found</p>}
+        style={{ minHeight: '20rem' }}
+        paginator
+        rows={25}
+        rowsPerPageOptions={[25, 50, 100]}
+      >
+        <Column field="store_name" header="Store" sortable />
+        <Column field="name" header="Product Name" sortable />
+        <Column field="price" header="Price" sortable />
+      </DataTable>
     );
   }
 
-  
-  interface searchResults {
-    store_name: string;
-    name: string;
-    price: number;
-  }
-
-  const safeResults = searchResults || [];
-
-  interface InputType {
-    id: number;
-    name: string;
-    price: number;
-  }
-  
-  interface OutputType {
-    productId: number;
-    productName: string;
-    productPrice: number;
-  }
-
-  const convertToObject = (searchResults: InputType): OutputType => {
-    return {
-      productId:searchResults.id,
-      productName: searchResults.name,
-      productPrice: searchResults.price
-    };
-  };
-
   return (
-  <>
+    <>
       <form style={{ width: '100%', display: 'flex', marginBottom: '2rem' }}>
         <InputText
           disabled={loading}
@@ -114,19 +98,21 @@ export default function KeywordSearchDisplay({ stores, page_props: { toast }, fo
           icon={PrimeIcons.SEARCH}
           loading={loading}
           onClick={(e) => {
-            loadKeywordSearchResult();
+            search();
             e.preventDefault();
           }}
         >
           Search
         </Button>
-        </form>
-        <div>
-          
-         
+      </form>
+      <div id="search-results">
+        <div id="search-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
+          <div>
+            <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
           </div>
-    
-      
-   </>
+        </div>
+        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{results}</div>
+      </div>
+    </>
   );
 }

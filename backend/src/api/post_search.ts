@@ -32,14 +32,29 @@ export default function post_search(logger: Logger, db_connection: DB): RequestH
 
     let response;
     try {
-      [response] = await db_connection.execute('SELECT DISTINCT Stores.store_name, Products.name, Products.price FROM Stores JOIN Products ON Stores.store_id = Products.store_id WHERE Products.name LIKE "%?%" ORDER BY Stores.store_name ASC, Products.price ASC LIMIT 15;', [search]);
+      [response] = await db_connection.execute(
+        `
+SELECT Stores.store_name, Products.name, Products.price 
+FROM Stores JOIN Products 
+  ON Stores.store_id = Products.store_id 
+WHERE Products.name LIKE ?
+ORDER BY Stores.store_name ASC, Products.price ASC
+  `,
+        [`%${search}%`],
+      );
     } catch (error) {
       logger.warn('Failed to get item statistics.', error);
       res.status(500).send();
       return;
     }
 
-    const result = keywordSearch(response[0])
+    try {
+      await db_connection.execute('INSERT INTO SearchHistory (user_id, search_string) VALUES(?, ?)', [user_id, search]);
+    } catch {
+      /* Ignore if this fails (save history may be disabled) */
+    }
+
+    const result = keywordSearch(response);
     res.status(200).send(result);
     return;
   };

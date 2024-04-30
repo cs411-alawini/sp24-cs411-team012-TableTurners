@@ -8,13 +8,13 @@
   font-weight: 400;
 }
 
-#stat-results {
+#search-results {
   position: relative;
   width: 100%;
   min-height: 20rem;
 }
 
-#stat-loading {
+#search-loading {
   position: absolute;
   top: 0;
   left: 0;
