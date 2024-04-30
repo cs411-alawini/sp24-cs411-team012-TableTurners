@@ -5,6 +5,10 @@ import { InputText } from 'primereact/inputtext'; // React input text box UI com
 import api from '../../api/api'; // Imports API given by project
 import { PageProps } from '../../Pages'; // Contains props passed to pages in application
 import { Message } from 'primereact/message'; // React message component to display messages on screen when appropriate
+import { useNavigate } from 'react-router-dom';
+import { Card } from 'primereact/card';
+
+import './signup.css';
 
 function Signup({ toast }: PageProps) {
   const [loading, setLoading] = useState(false); // State object for button loading
@@ -13,9 +17,9 @@ function Signup({ toast }: PageProps) {
   const [lastName, setLastName]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input first_name value, and defines function to handle changes to element
   const [password, setPassword]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input first_name value, and defines function to handle changes to element
 
+  const navigate = useNavigate();
   const [errorText, setErrorText] = useState<string>(''); // Holds appropriate text for error msg, and function to set it
   const [showErrorMsg, setShowErrorMsg] = useState(false); // Holds state of error msg (shown or hidden), and function to set it
-  const [showSuccessMsg, setShowSuccessMsg] = useState(false); // Holds state of success msg (shown or hidden), and function to set it
 
   /* Sets the const email upon new text being entered into the corresponding text box */
   function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -42,7 +46,6 @@ function Signup({ toast }: PageProps) {
     /* Set button as loading and hide messages */
     setLoading(true);
     setShowErrorMsg(false);
-    setShowSuccessMsg(false);
     /* Call API method to submit request and evaluate returned status */
     api
       .post_signup(email, password, firstName, lastName)
@@ -50,7 +53,7 @@ function Signup({ toast }: PageProps) {
         /* Evaluate return status */
         if (response_status === 201) {
           /* Successful */
-          setShowSuccessMsg(true);
+          navigate('/profile');
         } else if (response_status === 400) {
           /* Bad Request (Client-Sided) */
           setErrorText('Missing information. Please fill out the appropriate field and try again!');
@@ -75,61 +78,72 @@ function Signup({ toast }: PageProps) {
   }
 
   return (
-    <>
+    <Card id="signup-card">
       <h1>Sign Up</h1>
       <p>Please fill out the following information to sign up!</p>
       {/* Input Text Box elements for user information */}
-      <div>
-        <span className="p-input-icon-left">
-          <i className="pi pi-at" style={{ paddingLeft: '5px' }} />
-          <InputText placeholder="Email" style={{ paddingLeft: '30px' }} value={email} onChange={handleEmailChange} />
-        </span>
-      </div>
-      <div>
-        <span className="p-input-icon-left">
-          <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
-          <InputText
-            placeholder="Password"
-            style={{ paddingLeft: '30px' }}
-            value={password}
-            onChange={handlePasswordChange}
-          />
-        </span>
-      </div>
-      <div>
-        <span className="p-input-icon-left">
-          <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
-          <InputText
-            placeholder="First Name"
-            style={{ paddingLeft: '30px' }}
-            value={firstName}
-            onChange={handleFirstNameChange}
-          />
-        </span>
-      </div>
-      <div>
-        <span className="p-input-icon-left">
-          <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
-          <InputText
-            placeholder="Last Name"
-            style={{ paddingLeft: '30px' }}
-            value={lastName}
-            onChange={handleLastNameChange}
-          />
-        </span>
-      </div>
-      <Button icon={PrimeIcons.SIGN_IN} onClick={() => submit()} loading={loading}>
-        Submit
-      </Button>
-      {/* Message object for error message */}
-      {showErrorMsg && <Message severity="error" text={errorText} />}
-      <div>
-        {/* Message object for success message */}
-        {showSuccessMsg && (
-          <Message severity="success" text="Profile successfully created! Please navigate to Login page to log in." />
+      <form>
+        <div className="signup-input">
+          <span className="p-input-icon-left">
+            <i className="pi pi-at" style={{ paddingLeft: '5px' }} />
+            <InputText placeholder="Email" style={{ paddingLeft: '30px' }} value={email} onChange={handleEmailChange} />
+          </span>
+        </div>
+        <div className="signup-input">
+          <span className="p-input-icon-left">
+            <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
+            <InputText
+              placeholder="Password"
+              type="password"
+              style={{ paddingLeft: '30px' }}
+              value={password}
+              onChange={handlePasswordChange}
+            />
+          </span>
+        </div>
+        <div className="signup-input">
+          <span className="p-input-icon-left">
+            <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
+            <InputText
+              placeholder="First Name"
+              style={{ paddingLeft: '30px' }}
+              value={firstName}
+              onChange={handleFirstNameChange}
+            />
+          </span>
+        </div>
+        <div className="signup-input">
+          <span className="p-input-icon-left">
+            <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
+            <InputText
+              placeholder="Last Name"
+              style={{ paddingLeft: '30px' }}
+              value={lastName}
+              onChange={handleLastNameChange}
+            />
+          </span>
+        </div>
+        {/* Message object for error message */}
+        {showErrorMsg && (
+          <div className="signup-input">
+            <Message severity="error" text={errorText} />
+          </div>
         )}
-      </div>
-    </>
+        <div className="signup-input">
+          <Button
+            id="signup-button"
+            icon={PrimeIcons.SIGN_IN}
+            onClick={(e) => {
+              submit();
+              e.preventDefault();
+            }}
+            loading={loading}
+          >
+            Submit
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }
 

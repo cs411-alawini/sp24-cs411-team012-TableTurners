@@ -6,6 +6,9 @@ import { InputText } from 'primereact/inputtext'; // React input text box UI com
 import api from '../../api/api'; // Imports API given by project
 import { PageProps } from '../../Pages'; // Contains props passed to pages in application
 import { Message } from 'primereact/message';
+import { Card } from 'primereact/card';
+
+import './login.css';
 
 function Login({ toast }: PageProps) {
   const navigate = useNavigate(); // Navigation object for page redirection
@@ -70,34 +73,51 @@ function Login({ toast }: PageProps) {
 
   /* Below contains the Frontend Elements */
   return (
-    <>
+    <Card id="login-card">
       <h1> Login </h1>
-      <div>
-        {/* InputText element for Email Box */}
-        <span className="p-input-icon-left">
-          <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
-          <InputText placeholder="Email" style={{ paddingLeft: '30px' }} value={inputEmail} onChange={handleEmailChange} />
-        </span>
-      </div>
-      <div>
-        {/* InputText element for Password box*/}
-        <span className="p-input-icon-left">
-          <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
-          <InputText
-            placeholder="Password"
-            style={{ paddingLeft: '30px' }}
-            value={inputPassword}
-            onChange={handlePasswordChange}
-          />
-        </span>
-      </div>
-      {/* Button element to initiate login*/}
-      <Button icon={PrimeIcons.SIGN_IN} onClick={() => submit()} loading={loading}>
-        Login
-      </Button>
-      {/* Message object for error message */}
-      {showErrorMsg && <Message severity="error" text={errorText} />}
-    </>
+      <form>
+        <div className="login-input">
+          {/* InputText element for Email Box */}
+          <span className="p-input-icon-left">
+            <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
+            <InputText placeholder="Email" style={{ paddingLeft: '30px' }} value={inputEmail} onChange={handleEmailChange} />
+          </span>
+        </div>
+        <div className="login-input">
+          {/* InputText element for Password box*/}
+          <span className="p-input-icon-left">
+            <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
+            <InputText
+              placeholder="Password"
+              type="password"
+              style={{ paddingLeft: '30px' }}
+              value={inputPassword}
+              onChange={handlePasswordChange}
+            />
+          </span>
+        </div>
+        {/* Message object for error message */}
+        {showErrorMsg && (
+          <div className="login-input">
+            <Message severity="error" text={errorText} />
+          </div>
+        )}
+        {/* Button element to initiate login*/}
+        <div className="login-input">
+          <Button
+            id="login-button"
+            icon={PrimeIcons.SIGN_IN}
+            onClick={(e) => {
+              submit();
+              e.preventDefault();
+            }}
+            loading={loading}
+          >
+            Login
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }
 

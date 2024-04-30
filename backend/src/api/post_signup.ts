@@ -23,21 +23,20 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
     }
 
     /* Hash the password */
-    async function hashPassword(password: string): Promise<string> {
-      try {
-        /* Hash using Argon2 */
-        const hashedPassword = await argon2.hash(password);
-        return hashedPassword;
-      } catch (error) {
-        /* Handle error if hashing fails */
-        logger.error('Failed to hash password');
-        throw error;
-      }
+    let hashedPassword: string;
+    try {
+      /* Hash using Argon2 */
+      hashedPassword = await argon2.hash(password);
+    } catch (error) {
+      /* Handle error if hashing fails */
+      logger.error('Failed to hash password', error);
+      res.status(500).send();
+      return;
     }
 
+    let response;
     try {
-      const hashedPassword = await hashPassword(password);
-      await db_connection.execute(
+      response = await db_connection.execute(
         'INSERT INTO Accounts (email_addr, password_hash, first_name, last_name) VALUES (?, ?, ?, ?);',
         [email, hashedPassword, first_name, last_name],
       );
@@ -47,6 +46,7 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
       return;
     }
 
+    req.session.user_id = response[0].insertId;
     res.status(201).send();
     return;
   };
