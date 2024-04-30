@@ -12,6 +12,7 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 
 import './search.css';
+import formatPrice from '../../../utils/format_price';
 
 export default function KeywordSearchDisplay({ stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
   if (!stores || !foodgroups) {
@@ -77,7 +78,7 @@ export default function KeywordSearchDisplay({ stores, page_props: { toast }, fo
       >
         <Column field="store_name" header="Store" sortable />
         <Column field="name" header="Product Name" sortable />
-        <Column field="price" header="Price" sortable />
+        <Column field="price" header="Price" sortable body={(p) => formatPrice(p.price)} />
       </DataTable>
     );
   }
