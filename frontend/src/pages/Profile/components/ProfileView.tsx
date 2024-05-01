@@ -74,13 +74,13 @@ export default function ProfileView({ toast, profile }: PageProps) {
 
   const profile_info = (
     <>
-      <p>
+      <p style={{ lineBreak: 'anywhere' }}>
         <b>First Name: </b> {profile.first_name}
       </p>
-      <p>
+      <p style={{ lineBreak: 'anywhere' }}>
         <b>Last Name: </b> {profile.last_name}
       </p>
-      <p>
+      <p style={{ lineBreak: 'anywhere' }}>
         <b>Email Address: </b> {profile.email_addr}
       </p>
     </>

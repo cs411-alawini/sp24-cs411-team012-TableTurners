@@ -10,6 +10,7 @@ import './navbar.css';
 import api from '../../api/api';
 import { PageProps } from '../../Pages';
 import { ProfileInfo } from '../../api/get_profile';
+import limitStrLength from '../../utils/limit_str_length';
 
 export default function Navbar({
   toast,
@@ -69,7 +70,6 @@ export default function Navbar({
   // If waiting for load on unauthenticated page
   let nav_right = (
     <div id="navright">
-      {' '}
       <div className="navlink">
         <div>
           <Skeleton width="3rem"></Skeleton>
@@ -86,7 +86,6 @@ export default function Navbar({
   if (['/profile', '/search'].includes(location.pathname)) {
     nav_right = (
       <div id="navright">
-        {' '}
         <div className="navlink">
           <div>
             <Skeleton width="4rem"></Skeleton>
@@ -109,13 +108,12 @@ export default function Navbar({
   if (!loadingProfile && profile) {
     nav_right = (
       <div id="navright">
-        {' '}
         <Link to={'/search'} className={linkClass('/search')}>
           <div>Search</div>
           <Ripple />
         </Link>
         <Link to={'/profile'} className={linkClass('/profile')}>
-          <div>Profile ({profile?.first_name})</div>
+          <div>Profile ({limitStrLength(profile?.first_name, 8)})</div>
           <Ripple />
         </Link>
         <div className="p-ripple navlink">
@@ -130,7 +128,6 @@ export default function Navbar({
   if (!loadingProfile && !profile) {
     nav_right = (
       <div id="navright">
-        {' '}
         <Link to={'/login'} className={linkClass('/login')}>
           <div>Login</div>
           <Ripple />
