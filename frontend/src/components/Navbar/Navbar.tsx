@@ -113,7 +113,7 @@ export default function Navbar({
           <Ripple />
         </Link>
         <Link to={'/profile'} className={linkClass('/profile')}>
-          <div>Profile ({limitStrLength(profile?.first_name, 8)})</div>
+          <div>Profile ({limitStrLength(profile?.first_name, 16)})</div>
           <Ripple />
         </Link>
         <div className="p-ripple navlink">
