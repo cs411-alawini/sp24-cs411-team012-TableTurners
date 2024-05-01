@@ -5,6 +5,7 @@ import ProfileView from './components/ProfileView';
 import HistoryView from './components/HistoryView';
 
 function Profile({ toast, profile }: PageProps) {
+  // Empty page if profile hasn't been loaded yet
   if (!profile) return <></>;
   return (
     <>

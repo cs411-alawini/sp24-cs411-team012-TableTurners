@@ -1,16 +1,18 @@
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { PrimeIcons } from 'primereact/api';
-
-import { SearchMetadata } from '../Search';
-import { useNavigate } from 'react-router-dom';
-import { SetStateAction, useState } from 'react';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import api from '../../../api/api';
-import { budget_results } from '../../../api/post_search_budget';
+import { Tooltip } from 'primereact/tooltip';
 import { InputNumber } from 'primereact/inputnumber';
+
+import api from '../../../api/api';
+import { SearchMetadata } from '../Search';
+import { BudgetResults } from '../../../api/post_search_budget';
 import formatPrice from '../../../utils/format_price';
+import limitInput from '../../../utils/limit_input';
 
 export default function BudgetSearch({ stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
   if (!stores || !foodgroups) {
@@ -24,12 +26,18 @@ export default function BudgetSearch({ stores, page_props: { toast }, foodgroups
     );
   }
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [searchString, setSearchString] = useState('');
-  const [searchBudget, setSearchBudget] = useState(0);
-  const [searchResults, setSearchResults] = useState<budget_results | undefined>();
 
+  // User input tooltips
+  const tooltip = useRef<Tooltip>(null);
+  const [tooltipMsg, setTTMsg] = useState('');
+
+  const [loading, setLoading] = useState(false);
+
+  const [searchString, setSearchString] = useState('');
+  const [searchBudget, setSearchBudget] = useState(10);
+  const [searchResults, setSearchResults] = useState<BudgetResults | undefined>();
+
+  // Run search
   function search() {
     if (searchString === '') {
       toast.current?.show({
@@ -38,13 +46,21 @@ export default function BudgetSearch({ stores, page_props: { toast }, foodgroups
       });
       return;
     }
+    if (searchString.length > 8192) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Maximum search string length is 8192 characters',
+      });
+      return;
+    }
 
+    // Clear search results, set loading state,
     setSearchResults(undefined);
     setLoading(true);
-    setShowResults(false);
     api
       .post_search_budget(searchString, searchBudget)
-      .then((budget_results: SetStateAction<budget_results | undefined>) => {
+      .then((budget_results) => {
+        // Redirect to login if undefined (unauthorized)
         if (!budget_results) return navigate('/login');
         setSearchResults(budget_results);
       })
@@ -52,22 +68,17 @@ export default function BudgetSearch({ stores, page_props: { toast }, foodgroups
         console.error(error);
         toast.current?.show({
           severity: 'error',
-          summary: 'Failed to run search',
+          summary: 'Failed to execute budget search',
           detail: `${error.message}. Try again later`,
         });
       })
-      .finally(() => {
-        setLoading(false);
-        setShowResults(true);
-      });
+      .finally(() => setLoading(false));
   }
 
-  let results = <></>;
-  if (searchResults) {
-    results = (
+  const results = (
+    <div style={{ opacity: searchResults ? 1 : 0, transition: 'opacity 0.2s' }}>
       <DataTable
         value={searchResults}
-        loading={loading}
         emptyMessage={<p>No Results Found</p>}
         style={{ minHeight: '20rem' }}
         paginator
@@ -78,51 +89,64 @@ export default function BudgetSearch({ stores, page_props: { toast }, foodgroups
         <Column field="name" header="Product Name" sortable />
         <Column field="price" header="Price" sortable body={(p) => formatPrice(p.price)} />
       </DataTable>
-    );
-  }
+    </div>
+  );
+  const search_bar = (
+    <form style={{ width: '100%', display: 'flex', marginBottom: '2rem' }}>
+      <InputText
+        disabled={loading}
+        value={searchString}
+        placeholder="Comma Separated Queries"
+        onChange={limitInput(
+          tooltip,
+          setTTMsg,
+          (e) => {
+            setSearchString(e);
+            setSearchResults(undefined);
+          },
+          'Maximum search string length is 8192 characters',
+          8192,
+        )}
+        style={{ flex: 20, margin: '0 0.5rem 0 0' }}
+      />
+      <InputNumber
+        placeholder="Budget"
+        mode="currency"
+        currency="USD"
+        min={0}
+        disabled={loading}
+        value={searchBudget}
+        onValueChange={(e) => setSearchBudget(e.value ? e.value : 0)}
+        showButtons
+        style={{ flex: 1, margin: '0 0.5rem 0 0' }}
+      />
+      <Button
+        icon={PrimeIcons.SEARCH}
+        loading={loading}
+        onClick={(e) => {
+          search();
+          e.preventDefault();
+        }}
+      >
+        Search
+      </Button>
+    </form>
+  );
+  const loading_spinner = (
+    <div id="search-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
+      <div>
+        <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
+      </div>
+    </div>
+  );
 
   return (
     <>
-      <form style={{ width: '100%', display: 'flex', marginBottom: '2rem' }}>
-        <InputText
-          disabled={loading}
-          value={searchString}
-          placeholder="Comma Separated Query"
-          onChange={(e) => {
-            setShowResults(false);
-            setSearchString(e.target.value);
-          }}
-          style={{ flexGrow: 2, margin: '0 0.5rem 0 0' }}
-        />
-        <InputNumber
-          placeholder="Budget"
-          mode="currency"
-          currency="USD"
-          value={searchBudget}
-          onValueChange={(e) => {
-            setShowResults(false);
-            setSearchBudget(e.value ? e.value : 0);
-          }}
-          style={{ flexGrow: 1, margin: '0 0.5rem 0 0' }}
-        />
-        <Button
-          icon={PrimeIcons.SEARCH}
-          loading={loading}
-          onClick={(e) => {
-            search();
-            e.preventDefault();
-          }}
-        >
-          Search
-        </Button>
-      </form>
+      <Tooltip content={tooltipMsg} ref={tooltip} position="bottom" />
+      {search_bar}
       <div id="search-results">
-        <div id="search-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
-          <div>
-            <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
-          </div>
-        </div>
-        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{results}</div>
+        {results}
+        {loading_spinner}
       </div>
     </>
   );

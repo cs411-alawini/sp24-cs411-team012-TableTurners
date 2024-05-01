@@ -3,6 +3,7 @@ import argon2 from 'argon2';
 
 import { Logger } from '../logger.js';
 import { DB } from '../init_db.js';
+import validateString from '../utils/validate_string.js';
 
 /**
  * post_login()
@@ -13,20 +14,19 @@ import { DB } from '../init_db.js';
  */
 export default function post_login(logger: Logger, db_connection: DB): RequestHandler {
   return async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = validateString(email, true, 256);
+    password = validateString(password);
 
-    // Missing fields, bad request
-    if (email === '' || password === '') {
-      logger.debug('Invalid request, missing email or password');
+    if (!email || password === undefined) {
+      logger.debug('Invalid request, invalid email or password');
       res.status(400).send();
       return;
     }
 
     let response;
     try {
-      [response] = await db_connection.execute('SELECT user_id, password_hash FROM Accounts WHERE email_addr LIKE ?;', [
-        email,
-      ]);
+      [response] = await db_connection.execute('SELECT user_id, password_hash FROM Accounts WHERE email_addr = ?;', [email]);
     } catch (error) {
       logger.error('Failed to fetch password hash.', error);
       res.status(500).send();

@@ -23,13 +23,6 @@ export default async function initRedis(logger: Logger): Promise<RedisClient> {
       });
 
       await client.connect();
-      logger.info('Connected to Redis cache');
-
-      logger.info('Checking read/write permissions');
-      await client.set('Test Key', 'Test');
-      await client.get('Test Key');
-      await client.del('Test Key');
-
       logger.info('Successfully connected to Redis cache');
       return client;
     } catch (error) {

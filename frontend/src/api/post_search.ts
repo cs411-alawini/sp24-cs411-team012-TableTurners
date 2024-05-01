@@ -10,8 +10,8 @@ export type KeywordSearchResults = Array<KeywordSearchResult>;
 /**
  * post_search()
  * POST /api/search endpoint handler
- * @param something idk something
- * @returns idk do something
+ * @param search search string
+ * @returns search results if successful, undefined if not
  */
 export default async function post_search(search: string): Promise<KeywordSearchResults | undefined> {
   try {

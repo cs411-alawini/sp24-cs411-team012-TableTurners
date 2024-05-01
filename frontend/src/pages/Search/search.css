@@ -14,5 +14,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.5s;
+  transition: opacity 0.2s;
+}
+
+.stat-label {
+  text-align: left;
+}
+
+.stat-value {
+  padding-left: 3rem;
+  text-align: left;
+  font-weight: 400;
+}
+
+#search-results {
+  position: relative;
+  width: 100%;
+  min-height: 20rem;
 }

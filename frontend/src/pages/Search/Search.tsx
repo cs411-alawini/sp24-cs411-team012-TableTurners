@@ -1,24 +1,27 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TabPanel, TabView } from 'primereact/tabview';
-import { PageProps } from '../../Pages';
 import KeywordSearch from './components/KeywordSearch';
 import BudgetSearch from './components/BudgetSearch';
-import { useEffect, useState } from 'react';
-import api from '../../api/api';
 
-import './search.css';
-import { useNavigate } from 'react-router-dom';
+import api from '../../api/api';
 import { StoreList } from '../../api/get_stores';
 import { FoodGroups } from '../../api/get_foodgroups';
 import StatSearch from './components/StatSearch';
+import { PageProps } from '../../Pages';
+
+import './search.css';
 
 export type SearchMetadata = { page_props: PageProps; stores?: StoreList; foodgroups?: FoodGroups; refetchMeta: () => void };
 
 function Search({ toast, profile }: PageProps) {
   if (!profile) return <></>;
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [metadata, setMetadata] = useState<SearchMetadata>({ page_props: { toast, profile }, refetchMeta: fetchMeta });
 
+  // Fetch store and food group lists
   function fetchMeta() {
     setLoading(true);
     const store_promise = api.get_stores();

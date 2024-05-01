@@ -13,30 +13,24 @@ import { DB } from '../init_db.js';
 export default function post_del_account(logger: Logger, db_connection: DB): RequestHandler {
   return async (req, res) => {
     const { user_id } = req.session;
-    // No uid means something is wrong with session
-    if (user_id === undefined) {
-      logger.debug('Session does not include user_id, invalidating session');
-      req.session.destroy(() => {});
-      res.status(401).send();
-      return;
-    }
 
     let response;
     try {
-      [response] = await db_connection.execute('DELETE FROM Accounts Where user_id = ?;', [user_id]);
+      [response] = await db_connection.execute('DELETE FROM Accounts WHERE user_id = ?;', [user_id]);
     } catch (error) {
-      logger.error('Failed to fetch password hash.', error);
+      logger.error('Failed to delete user.', error);
       res.status(500).send();
       return;
     }
 
-    // If not rows affected, server error
+    // If no rows affected, server error
     if (response.affectedRows === 0) {
+      logger.warn('No user deleted when expected');
       res.status(500).send();
       return;
     }
 
-    // Delete user's session deleting their account
+    // Delete user's session after deleting their account
     req.session.destroy(() => {});
     res.status(200).send();
   };

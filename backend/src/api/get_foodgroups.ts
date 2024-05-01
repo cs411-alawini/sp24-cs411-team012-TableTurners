@@ -21,7 +21,6 @@ export default function get_foodgroups(logger: Logger, db_connection: DB): Reque
       return;
     }
 
-    const stores = response.map(({ Field }) => Field);
-    res.status(200).send(stores);
+    res.status(200).send(response);
   };
 }

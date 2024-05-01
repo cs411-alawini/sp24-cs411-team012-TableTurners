@@ -11,7 +11,7 @@ import api from '../../api/api';
 import { PageProps } from '../../Pages';
 import { ProfileInfo } from '../../api/get_profile';
 
-function Navbar({
+export default function Navbar({
   toast,
   profile,
   loadingProfile,
@@ -19,14 +19,19 @@ function Navbar({
 }: PageProps & { loadingProfile?: boolean; updateProfile: Dispatch<ProfileInfo | undefined> }) {
   const location = useLocation();
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
+
+  // Open/close state for navigation on mobile
   const [navOpen, setNavOpen] = useState(false);
 
+  // Handles logging user out and notifying on error
   function logout() {
     setLoading(true);
     api
       .get_logout()
       .then(() => {
+        // Clear profile and redirect to login on successful logout
         updateProfile(undefined);
         navigate('/login');
       })
@@ -42,8 +47,10 @@ function Navbar({
       .finally(() => setLoading(false));
   }
 
+  // Set link class to active if pathname matches its path, otherwise, normal navlink
   const linkClass = (path: string) => (location.pathname === path ? 'p-ripple activelink navlink' : 'p-ripple navlink');
 
+  // Given current path, figure out which page logo should link to
   const logo_link = (() => {
     const path_mapping: { [key: string]: string } = {
       '/search': '/profile',
@@ -59,9 +66,10 @@ function Navbar({
     return path_mapping[location.pathname];
   })();
 
-  // If waiting for loading on unauthenticated page
-  let nav_links = (
-    <>
+  // If waiting for load on unauthenticated page
+  let nav_right = (
+    <div id="navright">
+      {' '}
       <div className="navlink">
         <div>
           <Skeleton width="3rem"></Skeleton>
@@ -72,12 +80,13 @@ function Navbar({
           <Skeleton width="3.65rem" height="1.25rem"></Skeleton>
         </Button>
       </div>
-    </>
+    </div>
   );
-  // If waiting for loading on an authenticated page
+  // If waiting for load on an authenticated page
   if (['/profile', '/search'].includes(location.pathname)) {
-    nav_links = (
-      <>
+    nav_right = (
+      <div id="navright">
+        {' '}
         <div className="navlink">
           <div>
             <Skeleton width="4rem"></Skeleton>
@@ -93,13 +102,14 @@ function Navbar({
             <Skeleton width="3.70rem" height="1.25rem"></Skeleton>
           </Button>
         </div>
-      </>
+      </div>
     );
   }
   // If logged in
   if (!loadingProfile && profile) {
-    nav_links = (
-      <>
+    nav_right = (
+      <div id="navright">
+        {' '}
         <Link to={'/search'} className={linkClass('/search')}>
           <div>Search</div>
           <Ripple />
@@ -113,13 +123,14 @@ function Navbar({
             Logout
           </Button>
         </div>
-      </>
+      </div>
     );
   }
   // If logged out
   if (!loadingProfile && !profile) {
-    nav_links = (
-      <>
+    nav_right = (
+      <div id="navright">
+        {' '}
         <Link to={'/login'} className={linkClass('/login')}>
           <div>Login</div>
           <Ripple />
@@ -129,25 +140,26 @@ function Navbar({
             Sign Up
           </Button>
         </div>
-      </>
+      </div>
     );
   }
 
-  return (
-    <>
-      <div id="navparent" style={{ maxHeight: navOpen ? '15rem' : undefined }}>
-        <div id="navleft">
-          <Link to={logo_link} id="sitename">
-            <p>Grocery Aid</p>
-          </Link>
-          <div id="navopen">
-            <Button onClick={() => setNavOpen(!navOpen)} icon={navOpen ? PrimeIcons.TIMES : PrimeIcons.BARS}></Button>
-          </div>
-        </div>
-        <div id="navright">{nav_links}</div>
+  // Logo and open/close nav button
+  const nav_left = (
+    <div id="navleft">
+      <Link to={logo_link} id="sitename">
+        <p>Grocery Aid</p>
+      </Link>
+      <div id="navopen">
+        <Button onClick={() => setNavOpen(!navOpen)} icon={navOpen ? PrimeIcons.TIMES : PrimeIcons.BARS}></Button>
       </div>
-    </>
+    </div>
+  );
+
+  return (
+    <div id="navparent" style={{ maxHeight: navOpen ? '15rem' : undefined }}>
+      {nav_left}
+      {nav_right}
+    </div>
   );
 }
-
-export default Navbar;

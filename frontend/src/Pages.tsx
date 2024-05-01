@@ -16,7 +16,7 @@ import { PrimeIcons } from 'primereact/api';
 
 export type PageProps = { toast: RefObject<Toast>; profile?: ProfileInfo };
 
-function Pages({ toast }: { toast: RefObject<Toast> }) {
+export default function Pages({ toast }: { toast: RefObject<Toast> }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,6 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
         // notify user of error
         setProfile(undefined);
         setLoadFail(true);
-
         console.error(error);
         if (needs_auth.includes(location.pathname)) {
           toast.current?.show({
@@ -65,8 +64,18 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
 
   useEffect(loadProfile, [location.pathname]);
 
+  /**
+   * @param PageComponent component container should hold
+   * @param show_load if page should indicate while loading profile (i.e. /login should not show loading spinner, /profile should)
+   * @returns JSX element of container
+   */
   const Container = (PageComponent: JSX.Element, show_load: boolean) => {
-    let content = loading && show_load ? <></> : <div id="content-container">{PageComponent}</div>;
+    let content = <div id="content-container">{PageComponent}</div>;
+    // If currently loading, and page should show loading spinner, content should be empty for now
+    if (loading && show_load) {
+      content = <></>;
+    }
+    // If load failed, and page should indicate this, show error message and retry button
     if (loadFailed && show_load) {
       content = (
         <div id="content-container">
@@ -77,10 +86,12 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
         </div>
       );
     }
+
+    // Loading spinner element
     const load_screen = (
       <div id="profile-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
         <div>
-          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
+          <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>
         </div>
       </div>
     );
@@ -92,7 +103,7 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
           fallback={
             <div id="profile-loading" style={{ opacity: 0.5, pointerEvents: loading ? 'all' : 'none' }}>
               <div>
-                <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
+                <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>
               </div>
             </div>
           }
@@ -116,5 +127,3 @@ function Pages({ toast }: { toast: RefObject<Toast> }) {
     </Routes>
   );
 }
-
-export default Pages;

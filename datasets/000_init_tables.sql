@@ -8,14 +8,14 @@ USE `Grocery-Aid-Database`;
 
 CREATE TABLE Stores(
   store_id      INT AUTO_INCREMENT,
-  store_name    VARCHAR(255),
+  store_name    VARCHAR(256),
   PRIMARY KEY   (store_id)
 );
 
 CREATE TABLE Products(
   product_id    INT AUTO_INCREMENT,
   store_id      INT NOT NULL,
-  name          VARCHAR(255),
+  name          VARCHAR(256),
   price         REAL,
   PRIMARY KEY   (product_id),
   FOREIGN KEY   (store_id) REFERENCES Stores(store_id)
@@ -23,10 +23,10 @@ CREATE TABLE Products(
 
 CREATE TABLE Accounts(
   user_id       INT AUTO_INCREMENT,
-  first_name    VARCHAR(255),
-  last_name     VARCHAR(255),
-  password_hash VARCHAR(255) NOT NULL,
-  email_addr    VARCHAR(255) NOT NULL UNIQUE,
+  first_name    VARCHAR(256),
+  last_name     VARCHAR(256),
+  password_hash VARCHAR(256) NOT NULL,
+  email_addr    VARCHAR(256) NOT NULL UNIQUE,
   save_history  BOOL DEFAULT 1,
   PRIMARY KEY   (user_id)
 );
@@ -34,7 +34,7 @@ CREATE TABLE Accounts(
 CREATE TABLE SearchHistory(
   history_id    INT AUTO_INCREMENT,
   user_id       INT NOT NULL,
-  search_string VARCHAR(255),
+  search_string VARCHAR(256),
   timestamp     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY   (history_id),
   FOREIGN KEY   (user_id) REFERENCES Accounts(user_id)

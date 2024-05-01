@@ -3,6 +3,7 @@ import argon2 from 'argon2';
 
 import { Logger } from '../logger.js';
 import { DB } from '../init_db.js';
+import validateString from '../utils/validate_string.js';
 
 /**
  * post_signup()
@@ -13,11 +14,14 @@ import { DB } from '../init_db.js';
  */
 export default function post_signup(logger: Logger, db_connection: DB): RequestHandler {
   return async (req, res) => {
-    const { email, password, first_name, last_name } = req.body;
+    let { email, password, first_name, last_name } = req.body;
+    email = validateString(email, true, 256);
+    password = validateString(password);
+    first_name = validateString(first_name, false, 256);
+    last_name = validateString(last_name, false, 256);
 
-    // Missing fields, bad request
-    if (email === '' || password === '' || first_name === '' || last_name === '') {
-      logger.debug('Invalid request, missing email or password');
+    if (!email || password === undefined || !first_name || !last_name) {
+      logger.debug('Invalid request, missing email, password, first_name, or last_name');
       res.status(400).send();
       return;
     }
@@ -29,7 +33,7 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
       hashedPassword = await argon2.hash(password);
     } catch (error) {
       /* Handle error if hashing fails */
-      logger.error('Failed to hash password', error);
+      logger.error('Failed to hash password.', error);
       res.status(500).send();
       return;
     }
@@ -41,7 +45,7 @@ export default function post_signup(logger: Logger, db_connection: DB): RequestH
         [email, hashedPassword, first_name, last_name],
       );
     } catch (error) {
-      logger.warn('An error occurred when submitting the record', error);
+      logger.warn('An error occurred when creating account.', error);
       res.status(500).send();
       return;
     }

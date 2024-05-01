@@ -1,18 +1,25 @@
 import axios from 'axios';
 
+export type BudgetResult = {
+  store_name: string;
+  name: string;
+  price: number;
+};
+export type BudgetResults = Array<BudgetResult>;
+
 /**
  * post_search_budget()
  * POST /api/search_budget endpoint handler
- * @param something idk something
- * @returns idk do something
+ * @param search search string
+ * @param budget search budget parameter
+ * @returns budget search results if successful, undefined if not
  */
-export type budget_results = Array<object>;
-export default async function post_search_budget(search: string, budget: number): Promise<budget_results | undefined> {
+export default async function post_search_budget(search: string, budget: number): Promise<BudgetResults | undefined> {
   try {
     const res = await axios({
       method: 'post',
       url: '/api/search_budget',
-      timeout: 1000000,
+      timeout: 60000,
       data: { search, budget },
       withCredentials: true,
     });

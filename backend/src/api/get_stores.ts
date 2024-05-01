@@ -21,7 +21,6 @@ export default function get_stores(logger: Logger, db_connection: DB): RequestHa
       return;
     }
 
-    const stores = response.map(({ store_name }) => store_name);
-    res.status(200).send(stores);
+    res.status(200).send(response);
   };
 }

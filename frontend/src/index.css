@@ -26,6 +26,7 @@ h3 {
   transition: margin 0.2s;
 }
 
+/* Style loading spinner for fetching profile */
 #profile-loading {
   position: absolute;
   width: 100%;
@@ -39,11 +40,12 @@ h3 {
   transition: opacity 0.5s;
 }
 
-/* Fix for button icons */
+/* Fix for button icons no having padding */
 .p-button-icon {
   margin-right: 0.5rem;
 }
 
+/* media queries for responsive container */
 @media (max-width: 140rem) {
   #content-container {
     max-width: 120rem;
@@ -58,7 +60,6 @@ h3 {
   }
 }
 
-
 @media (max-width: 50rem) {
   #content-container {
     margin: 0 2rem;
@@ -68,7 +69,6 @@ h3 {
     font-size: 12px;
   }
 }
-
 
 @media (max-width: 35rem) {
   #content-container {

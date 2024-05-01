@@ -6,6 +6,6 @@
 #    These scripts are numbered so that they are run in order by the mysql docker container
 
 if [[ "$MYSQL_FILL_EXAMPLE_DATA" == "true" ]]; then
-  mysql --local-infile=1 -u root -p$MYSQL_ROOT_PASSWORD < /docker-entrypoint-initdb.d/010_import_data_script
+  mysql --local-infile=1 -u root -p$MYSQL_ROOT_PASSWORD < /docker-entrypoint-initdb.d/020_import_data_script
 fi
 

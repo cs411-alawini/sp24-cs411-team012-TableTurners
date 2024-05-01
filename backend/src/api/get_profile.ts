@@ -13,13 +13,6 @@ import { DB } from '../init_db.js';
 export default function get_profile(logger: Logger, db_connection: DB): RequestHandler {
   return async (req, res) => {
     const { user_id } = req.session;
-    // No uid means something is wrong with session
-    if (user_id === undefined) {
-      logger.debug('Session does not include user_id, invalidating session');
-      req.session.destroy(() => {});
-      res.status(401).send();
-      return;
-    }
 
     let response;
     try {
@@ -28,7 +21,7 @@ export default function get_profile(logger: Logger, db_connection: DB): RequestH
         [user_id],
       );
     } catch (error) {
-      logger.error(`Failed to fetch user profile. {user_id: ${user_id}}`, error);
+      logger.error('Failed to fetch user profile.', error);
       res.status(500).send();
       return;
     }

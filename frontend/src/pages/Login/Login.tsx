@@ -1,51 +1,55 @@
-import { useState } from 'react'; // React hook used for managing state within functional components
-import { useNavigate } from 'react-router-dom'; // React hook for navigation within the application, provided by React Router DOM
-import { Button } from 'primereact/button'; // React button UI component
-import { PrimeIcons } from 'primereact/api'; // Provides set of icon names
-import { InputText } from 'primereact/inputtext'; // React input text box UI component
-import api from '../../api/api'; // Imports API given by project
-import { PageProps } from '../../Pages'; // Contains props passed to pages in application
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { PrimeIcons } from 'primereact/api';
+import { InputText } from 'primereact/inputtext';
 import { Message } from 'primereact/message';
 import { Card } from 'primereact/card';
+import { Tooltip } from 'primereact/tooltip';
+
+import api from '../../api/api';
+import { PageProps } from '../../Pages';
 
 import './login.css';
+import limitInput from '../../utils/limit_input';
 
-function Login({ toast }: PageProps) {
-  const navigate = useNavigate(); // Navigation object for page redirection
+export default function Login({ toast }: PageProps) {
+  const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false); // State object for button loading
-  const [inputEmail, setInputEmail]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input email value, and defines function to handle changes to element
-  const [inputPassword, setInputPassword]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input password value, and defines function to handle changes to element
+  // User input tooltips
+  const tooltip = useRef<Tooltip>(null);
+  const [tooltipMsg, setTooltipMsg] = useState('');
 
-  const [errorText, setErrorText] = useState<string>(''); // Holds appropriate text for error msg, and function to set it
-  const [showErrorMsg, setShowErrorMsg] = useState(false); // Holds state of error msg (shown or hidden), and function to set it
+  // State object for button loading
+  const [loading, setLoading] = useState(false);
 
-  /* Sets the const email upon new text being entered into the corresponding text box */
-  function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setInputEmail(event.target.value); // Set to target value given by event
-  }
+  // User inputs
+  const [inputEmail, setInputEmail] = useState('');
+  const [inputPassword, setInputPassword] = useState('');
 
-  /* Sets the const password upon new text being entered into the corresponding text box */
-  function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setInputPassword(event.target.value); // Set to target value given by event
-  }
+  // Error info message
+  const [errorText, setErrorText] = useState<string>('');
+  const [showErrorMsg, setShowErrorMsg] = useState(false);
 
-  /* Submits email and password to API for authentication */
+  // Validate inputs and call API to login
   function submit() {
-    setLoading(true); // Set the loading button accordingly
+    if (inputEmail.length > 256) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Email Invalid',
+        detail: 'Maximum email length is 256 characters.',
+      });
+      return;
+    }
 
+    setLoading(true);
     api
-      .post_login(inputEmail, inputPassword) // Use post_login method to submit a login request
+      .post_login(inputEmail, inputPassword)
       .then((response_status) => {
-        // Get response from API and act accordingly
+        // Return code 200 = success, navigate to profile page
+        if (response_status === 200) navigate('/profile');
 
-        /* Check if successful */
-        if (response_status === 200) {
-          /* Return code 200 = success, navigate to profile page */
-          navigate('/profile');
-        }
-
-        /* Else, check for error code and set error msg as appropriate */
+        // Else, check for error code and set error msg as appropriate
         if (response_status === 400) {
           setErrorText('Missing email or password!');
           setShowErrorMsg(true);
@@ -58,67 +62,72 @@ function Login({ toast }: PageProps) {
         } else {
           setErrorText('An unknown error has occurred.');
           setShowErrorMsg(true);
-          return;
         }
       })
-      /* If any other error, then display bc we don't know what occurred */
       .catch((error) => {
         // notify user of error
         console.error(error);
         toast.current?.show({ severity: 'error', summary: 'Failed to log in', detail: `${error.message}. Try again later` });
       })
-      /* Finally, set the loading icon for button to false to reset */
       .finally(() => setLoading(false));
   }
 
-  /* Below contains the Frontend Elements */
+  const email_input = (
+    <div className="login-input">
+      <span className="p-input-icon-left">
+        <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
+        <InputText
+          className="email"
+          placeholder="Email"
+          style={{ paddingLeft: '30px' }}
+          value={inputEmail}
+          onChange={limitInput(tooltip, setTooltipMsg, setInputEmail, 'Maximum email length is 256 characters', 256)}
+        />
+      </span>
+    </div>
+  );
+  const password_input = (
+    <div className="login-input">
+      <span className="p-input-icon-left">
+        <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
+        <InputText
+          placeholder="Password"
+          type="password"
+          style={{ paddingLeft: '30px' }}
+          value={inputPassword}
+          onChange={(e) => setInputPassword(e.target.value)}
+        />
+      </span>
+    </div>
+  );
+  const error_msg = <div className="login-input">{showErrorMsg && <Message severity="error" text={errorText} />}</div>;
+
+  const submit_button = (
+    <div className="login-input">
+      <Button
+        id="login-button"
+        icon={PrimeIcons.SIGN_IN}
+        onClick={(e) => {
+          submit();
+          e.preventDefault();
+        }}
+        loading={loading}
+      >
+        Login
+      </Button>
+    </div>
+  );
+
   return (
     <Card id="login-card">
+      <Tooltip content={tooltipMsg} ref={tooltip} />
       <h1> Login </h1>
       <form>
-        <div className="login-input">
-          {/* InputText element for Email Box */}
-          <span className="p-input-icon-left">
-            <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
-            <InputText placeholder="Email" style={{ paddingLeft: '30px' }} value={inputEmail} onChange={handleEmailChange} />
-          </span>
-        </div>
-        <div className="login-input">
-          {/* InputText element for Password box*/}
-          <span className="p-input-icon-left">
-            <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
-            <InputText
-              placeholder="Password"
-              type="password"
-              style={{ paddingLeft: '30px' }}
-              value={inputPassword}
-              onChange={handlePasswordChange}
-            />
-          </span>
-        </div>
-        {/* Message object for error message */}
-        {showErrorMsg && (
-          <div className="login-input">
-            <Message severity="error" text={errorText} />
-          </div>
-        )}
-        {/* Button element to initiate login*/}
-        <div className="login-input">
-          <Button
-            id="login-button"
-            icon={PrimeIcons.SIGN_IN}
-            onClick={(e) => {
-              submit();
-              e.preventDefault();
-            }}
-            loading={loading}
-          >
-            Login
-          </Button>
-        </div>
+        {email_input}
+        {password_input}
+        {error_msg}
+        {submit_button}
       </form>
     </Card>
   );
 }
-
-export default Login;

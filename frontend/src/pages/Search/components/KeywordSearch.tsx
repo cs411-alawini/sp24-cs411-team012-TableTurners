@@ -1,18 +1,17 @@
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
-// import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { PrimeIcons } from 'primereact/api';
+import { Column } from 'primereact/column';
+import { DataTable } from 'primereact/datatable';
+import { Tooltip } from 'primereact/tooltip';
 
 import { SearchMetadata } from '../Search';
 import api from '../../../api/api';
 import { KeywordSearchResults } from '../../../api/post_search';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { Column } from 'primereact/column';
-import { DataTable } from 'primereact/datatable';
-
-import './search.css';
 import formatPrice from '../../../utils/format_price';
+import limitInput from '../../../utils/limit_input';
 
 export default function KeywordSearchDisplay({ stores, page_props: { toast }, foodgroups, refetchMeta }: SearchMetadata) {
   if (!stores || !foodgroups) {
@@ -25,10 +24,14 @@ export default function KeywordSearchDisplay({ stores, page_props: { toast }, fo
       </>
     );
   }
-
   const navigate = useNavigate();
+
+  // User input tooltips
+  const tooltip = useRef<Tooltip>(null);
+  const [tooltipMsg, setTTMsg] = useState('');
+
   const [loading, setLoading] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+
   const [searchString, setSearchString] = useState('');
   const [searchResults, setSearchResults] = useState<KeywordSearchResults | undefined>();
 
@@ -40,10 +43,16 @@ export default function KeywordSearchDisplay({ stores, page_props: { toast }, fo
       });
       return;
     }
+    if (searchString.length > 256) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Maximum search string length is 256 characters',
+      });
+      return;
+    }
 
     setSearchResults(undefined);
     setLoading(true);
-    setShowResults(false);
     api
       .post_search(searchString)
       .then((results) => {
@@ -54,19 +63,15 @@ export default function KeywordSearchDisplay({ stores, page_props: { toast }, fo
         console.error(error);
         toast.current?.show({
           severity: 'error',
-          summary: 'Failed to run search',
+          summary: 'Failed to execute keyword search',
           detail: `${error.message}. Try again later`,
         });
       })
-      .finally(() => {
-        setLoading(false);
-        setShowResults(true);
-      });
+      .finally(() => setLoading(false));
   }
 
-  let results = <></>;
-  if (searchResults) {
-    results = (
+  const results = (
+    <div style={{ opacity: searchResults ? 1 : 0, transition: 'opacity 0.2s' }}>
       <DataTable
         value={searchResults}
         loading={loading}
@@ -80,39 +85,53 @@ export default function KeywordSearchDisplay({ stores, page_props: { toast }, fo
         <Column field="name" header="Product Name" sortable />
         <Column field="price" header="Price" sortable body={(p) => formatPrice(p.price)} />
       </DataTable>
-    );
-  }
+    </div>
+  );
+  const search_bar = (
+    <form style={{ width: '100%', display: 'flex', marginBottom: '2rem' }}>
+      <InputText
+        disabled={loading}
+        placeholder="Search Query"
+        value={searchString}
+        onChange={limitInput(
+          tooltip,
+          setTTMsg,
+          (e) => {
+            setSearchString(e);
+            setSearchResults(undefined);
+          },
+          'Maximum search string length is 256 characters',
+          256,
+        )}
+        style={{ flexGrow: 1, margin: '0 0.5rem 0 0' }}
+      />
+      <Button
+        icon={PrimeIcons.SEARCH}
+        loading={loading}
+        onClick={(e) => {
+          search();
+          e.preventDefault();
+        }}
+      >
+        Search
+      </Button>
+    </form>
+  );
+  const loading_spinner = (
+    <div id="search-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
+      <div>
+        <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
+      </div>
+    </div>
+  );
 
   return (
     <>
-      <form style={{ width: '100%', display: 'flex', marginBottom: '2rem' }}>
-        <InputText
-          disabled={loading}
-          value={searchString}
-          onChange={(e) => {
-            setShowResults(false);
-            setSearchString(e.target.value);
-          }}
-          style={{ flexGrow: 1, margin: '0 0.5rem 0 0' }}
-        />
-        <Button
-          icon={PrimeIcons.SEARCH}
-          loading={loading}
-          onClick={(e) => {
-            search();
-            e.preventDefault();
-          }}
-        >
-          Search
-        </Button>
-      </form>
+      <Tooltip content={tooltipMsg} ref={tooltip} position="bottom" />
+      {search_bar}
       <div id="search-results">
-        <div id="search-loading" style={{ opacity: loading ? 0.5 : 0, pointerEvents: loading ? 'all' : 'none' }}>
-          <div>
-            <i className="pi pi-spin pi-spinner" style={{ fontSize: '2rem', color: 'white' }}></i>{' '}
-          </div>
-        </div>
-        <div style={{ opacity: showResults ? 1 : 0, transition: showResults ? '' : 'opacity 0.2s' }}>{results}</div>
+        {results}
+        {loading_spinner}
       </div>
     </>
   );

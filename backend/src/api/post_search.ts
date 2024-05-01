@@ -2,7 +2,7 @@ import { RequestHandler } from 'express';
 
 import { Logger } from '../logger.js';
 import { DB } from '../init_db.js';
-import keywordSearch from '../utils/keyword_search_result.js';
+import validateString from '../utils/validate_string.js';
 
 /**
  * post_search()
@@ -14,18 +14,11 @@ import keywordSearch from '../utils/keyword_search_result.js';
 export default function post_search(logger: Logger, db_connection: DB): RequestHandler {
   return async (req, res) => {
     const { user_id } = req.session;
-    // No uid means something is wrong with session
-    if (user_id === undefined) {
-      logger.debug('Session does not include user_id, invalidating session');
-      req.session.destroy(() => {});
-      res.status(401).send();
-      return;
-    }
+    let { search } = req.body;
+    search = validateString(search, true, 256);
 
-    const { search } = req.body;
-    // Missing fields, bad request
-    if (search === '') {
-      logger.debug('Invalid request, missing search string');
+    if (!search) {
+      logger.debug('Invalid request, invalid search string');
       res.status(400).send();
       return;
     }
@@ -34,12 +27,12 @@ export default function post_search(logger: Logger, db_connection: DB): RequestH
     try {
       [response] = await db_connection.execute(
         `
-        SELECT Stores.store_name, Products.name, Products.price 
+        SELECT DISTINCT Stores.store_name, Products.name, Products.price 
         FROM Stores JOIN Products 
           ON Stores.store_id = Products.store_id 
         WHERE Products.name LIKE ?
         ORDER BY Stores.store_name ASC, Products.price ASC
-  `,
+        `,
         [`%${search}%`],
       );
     } catch (error) {
@@ -54,8 +47,6 @@ export default function post_search(logger: Logger, db_connection: DB): RequestH
       /* Ignore if this fails (save history may be disabled) */
     }
 
-    const result = keywordSearch(response);
-    res.status(200).send(result);
-    return;
+    res.status(200).send(response);
   };
 }

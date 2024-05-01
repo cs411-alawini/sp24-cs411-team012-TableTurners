@@ -1,56 +1,73 @@
-import { useState } from 'react'; // React hook used for managing state within functional components
-import { Button } from 'primereact/button'; // React button UI component
-import { PrimeIcons } from 'primereact/api'; // Provides set of icon names
-import { InputText } from 'primereact/inputtext'; // React input text box UI component
-import api from '../../api/api'; // Imports API given by project
-import { PageProps } from '../../Pages'; // Contains props passed to pages in application
-import { Message } from 'primereact/message'; // React message component to display messages on screen when appropriate
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from 'primereact/button';
+import { PrimeIcons } from 'primereact/api';
+import { InputText } from 'primereact/inputtext';
+import { Message } from 'primereact/message';
 import { Card } from 'primereact/card';
+import { Tooltip } from 'primereact/tooltip';
+
+import api from '../../api/api';
+import { PageProps } from '../../Pages';
 
 import './signup.css';
+import limitInput from '../../utils/limit_input';
 
-function Signup({ toast }: PageProps) {
-  const [loading, setLoading] = useState(false); // State object for button loading
-  const [email, setEmail]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input email_addr value, and defines function to handle changes to element
-  const [firstName, setFirstName]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input first_name value, and defines function to handle changes to element
-  const [lastName, setLastName]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input first_name value, and defines function to handle changes to element
-  const [password, setPassword]: [string, React.Dispatch<React.SetStateAction<string>>] = useState(''); // Holds input first_name value, and defines function to handle changes to element
-
+export default function Signup({ toast }: PageProps) {
   const navigate = useNavigate();
-  const [errorText, setErrorText] = useState<string>(''); // Holds appropriate text for error msg, and function to set it
+
+  // User input tooltips
+  const tooltipEmail = useRef<Tooltip>(null);
+  const [tooltipEmailMsg, setEmailTTip] = useState('');
+  const tooltipFirst = useRef<Tooltip>(null);
+  const [tooltipFirstMsg, setFirstTTip] = useState('');
+  const tooltipLast = useRef<Tooltip>(null);
+  const [tooltipLastMsg, setLastTTip] = useState('');
+
+  // State object for button loading
+  const [loading, setLoading] = useState(false);
+
+  // User inputs
+  const [email, setEmail] = useState('');
+  const [firstName, setFirst] = useState('');
+  const [lastName, setLast] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Error info message
+  const [errorText, setErrorText] = useState<string>('');
   const [showErrorMsg, setShowErrorMsg] = useState(false); // Holds state of error msg (shown or hidden), and function to set it
 
-  /* Sets the const email upon new text being entered into the corresponding text box */
-  function handleEmailChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setEmail(event.target.value);
-  }
-
-  /* Sets the const firstName upon new text being entered into the corresponding text box */
-  function handleFirstNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setFirstName(event.target.value);
-  }
-
-  /* Sets the const lastName upon new text being entered into the corresponding text box */
-  function handleLastNameChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setLastName(event.target.value);
-  }
-
-  /* Sets the const lastName upon new text being entered into the corresponding text box */
-  function handlePasswordChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(event.target.value);
-  }
-
-  /* Submits the user information to API for processing */
+  // Validate inputs and call API to create account
   function submit() {
-    /* Set button as loading and hide messages */
-    setLoading(true);
+    if (email.length > 256) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Email Invalid',
+        detail: 'Maximum email length is 256 characters.',
+      });
+      return;
+    }
+    if (firstName.length > 256) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'First Name Invalid',
+        detail: 'Maximum first name length is 256 characters.',
+      });
+      return;
+    }
+    if (lastName.length > 256) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Last Name Invalid',
+        detail: 'Maximum last name length is 256 characters.',
+      });
+      return;
+    }
 
-    /* Call API method to submit request and evaluate returned status */
+    setLoading(true);
     api
       .post_signup(email, password, firstName, lastName)
       .then((response_status) => {
-        /* Evaluate return status */
         if (response_status === 201) {
           /* Successful */
           navigate('/profile');
@@ -66,8 +83,6 @@ function Signup({ toast }: PageProps) {
           setErrorText('An unknown error has occurred.');
           setShowErrorMsg(true);
         }
-
-        return;
       })
       .catch((error) => {
         // notify user of error
@@ -81,74 +96,91 @@ function Signup({ toast }: PageProps) {
       .finally(() => setLoading(false));
   }
 
+  const email_input = (
+    <div className="signup-input">
+      <span className="p-input-icon-left">
+        <i className="pi pi-at" style={{ paddingLeft: '5px' }} />
+        <InputText
+          placeholder="Email"
+          style={{ paddingLeft: '30px' }}
+          value={email}
+          onChange={limitInput(tooltipEmail, setEmailTTip, setEmail, 'Maximum email length is 256 characters', 256)}
+        />
+      </span>
+    </div>
+  );
+  const password_input = (
+    <div className="signup-input">
+      <span className="p-input-icon-left">
+        <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
+        <InputText
+          placeholder="Password"
+          type="password"
+          style={{ paddingLeft: '30px' }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </span>
+    </div>
+  );
+  const firstname_input = (
+    <div className="signup-input">
+      <span className="p-input-icon-left">
+        <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
+        <InputText
+          placeholder="First Name"
+          style={{ paddingLeft: '30px' }}
+          value={firstName}
+          onChange={limitInput(tooltipFirst, setFirstTTip, setFirst, 'Maximum first name length is 256 characters', 256)}
+        />
+      </span>
+    </div>
+  );
+  const lastname_input = (
+    <div className="signup-input">
+      <span className="p-input-icon-left">
+        <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
+        <InputText
+          placeholder="Last Name"
+          style={{ paddingLeft: '30px' }}
+          value={lastName}
+          onChange={limitInput(tooltipLast, setLastTTip, setLast, 'Maximum last name length is 256 characters', 256)}
+        />
+      </span>
+    </div>
+  );
+  const error_msg = <div className="signup-input">{showErrorMsg && <Message severity="error" text={errorText} />}</div>;
+  const submit_button = (
+    <div className="signup-input">
+      <Button
+        id="signup-button"
+        icon={PrimeIcons.SIGN_IN}
+        onClick={(e) => {
+          submit();
+          e.preventDefault();
+        }}
+        loading={loading}
+      >
+        Submit
+      </Button>
+    </div>
+  );
+
   return (
     <Card id="signup-card">
+      <Tooltip content={tooltipEmailMsg} ref={tooltipEmail} />
+      <Tooltip content={tooltipFirstMsg} ref={tooltipFirst} />
+      <Tooltip content={tooltipLastMsg} ref={tooltipLast} />
       <h1>Sign Up</h1>
       <p>Please fill out the following information to sign up!</p>
-      {/* Input Text Box elements for user information */}
       <form>
-        <div className="signup-input">
-          <span className="p-input-icon-left">
-            <i className="pi pi-at" style={{ paddingLeft: '5px' }} />
-            <InputText placeholder="Email" style={{ paddingLeft: '30px' }} value={email} onChange={handleEmailChange} />
-          </span>
-        </div>
-        <div className="signup-input">
-          <span className="p-input-icon-left">
-            <i className="pi pi-lock" style={{ paddingLeft: '5px' }} />
-            <InputText
-              placeholder="Password"
-              type="password"
-              style={{ paddingLeft: '30px' }}
-              value={password}
-              onChange={handlePasswordChange}
-            />
-          </span>
-        </div>
-        <div className="signup-input">
-          <span className="p-input-icon-left">
-            <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
-            <InputText
-              placeholder="First Name"
-              style={{ paddingLeft: '30px' }}
-              value={firstName}
-              onChange={handleFirstNameChange}
-            />
-          </span>
-        </div>
-        <div className="signup-input">
-          <span className="p-input-icon-left">
-            <i className="pi pi-address-book" style={{ paddingLeft: '5px' }} />
-            <InputText
-              placeholder="Last Name"
-              style={{ paddingLeft: '30px' }}
-              value={lastName}
-              onChange={handleLastNameChange}
-            />
-          </span>
-        </div>
-        {/* Message object for error message */}
-        {showErrorMsg && (
-          <div className="signup-input">
-            <Message severity="error" text={errorText} />
-          </div>
-        )}
-        <div className="signup-input">
-          <Button
-            id="signup-button"
-            icon={PrimeIcons.SIGN_IN}
-            onClick={(e) => {
-              submit();
-              e.preventDefault();
-            }}
-            loading={loading}
-          >
-            Submit
-          </Button>
-        </div>
+        {email_input}
+        {password_input}
+        {firstname_input}
+        {lastname_input}
+        {error_msg}
+        {submit_button}
       </form>
     </Card>
   );
 }
-
-export default Signup;
