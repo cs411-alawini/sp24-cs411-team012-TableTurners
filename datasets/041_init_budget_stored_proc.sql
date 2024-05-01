@@ -11,14 +11,14 @@ DELIMITER //
 CREATE PROCEDURE BudgetSearch(
   IN uid INT,
   IN budget DOUBLE,
-  IN searchString VARCHAR(8192)
+  IN searchString VARCHAR(256)
 )
 BEGIN
   DECLARE save_hist BOOL;
   DECLARE store_cheap_id VARCHAR(256);
   DECLARE avg_price DOUBLE;
-  DECLARE search_list VARCHAR(8192);
-  DECLARE curr_search VARCHAR(8192);
+  DECLARE search_list VARCHAR(256);
+  DECLARE curr_search VARCHAR(256);
   DECLARE start_idx INT;
   DECLARE end_idx INT;
   DECLARE end_list INT DEFAULT 0;

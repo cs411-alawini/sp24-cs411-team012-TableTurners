@@ -46,10 +46,10 @@ export default function BudgetSearch({ stores, page_props: { toast }, foodgroups
       });
       return;
     }
-    if (searchString.length > 8192) {
+    if (searchString.length > 256) {
       toast.current?.show({
         severity: 'error',
-        summary: 'Maximum search string length is 8192 characters',
+        summary: 'Maximum search string length is 256 characters',
       });
       return;
     }
@@ -104,8 +104,8 @@ export default function BudgetSearch({ stores, page_props: { toast }, foodgroups
             setSearchString(e);
             setSearchResults(undefined);
           },
-          'Maximum search string length is 8192 characters',
-          8192,
+          'Maximum search string length is 256 characters',
+          256,
         )}
         style={{ flex: 20, margin: '0 0.5rem 0 0' }}
       />

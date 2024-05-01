@@ -16,7 +16,7 @@ export default function post_search_budget(logger: Logger, db_connection: DB): R
   return async (req, res) => {
     const { user_id } = req.session;
     let { search, budget } = req.body;
-    search = validateString(search, true, 8192);
+    search = validateString(search, true, 256);
     budget = validateNumber(budget, 0);
 
     // Missing fields, bad request
